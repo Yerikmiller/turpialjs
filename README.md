@@ -3,7 +3,7 @@
 	<h1>
 		Turpial JS - Micro Javascript Framework to create single page applications.
 	</h1>	
-	<div>
+	<div style="width: 100%;text-align: center;">
 		<img src="http://maricuto.website/default/public/html_base/img/projects/turpial-logo.svg" alt="Turpial JS - Micro Javascript Framework to create SPA easily">
 	</div>
 	<p>
