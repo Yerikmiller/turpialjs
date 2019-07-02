@@ -14,9 +14,34 @@
 	<h2>
 		Getting Started
 	</h2>
+	<pre>
 	<code>
 	<script src="https://cdn.jsdelivr.net/gh/Yerikmiller/turpialjs/turpial.min.js"></script>
-	</code>	
+	</code>
+	</pre>
+	<h2>
+		Basic Usage
+	</h2>
+	<pre>
+	<code>
+	const turpial = new Turpial({
+	  core_path: "/turpial/src/turpial-app/",
+	  autoloader_folder: "views/",
+	  public_path: "turpial",
+	  cache: "no-store",
+	  autoloader: true,
+	});
+	// core_path: where is alocated your turpial application (.turpial.js files)
+	/* public_path: Your application root folder name. Ex: 127.0.0.1:8080/mywebpage
+	 * in this case yout public_path should be "mywebpage"
+	*/
+	/* autoloader_folder: if you want to autoload views (turpial.js) files based on URL
+	 * we can manage how will work in each case manually
+	*/
+	// cache: select if you want to cache files loaded
+	// autoloader: set as true if you want to activate autolaoder option.
+	</code>
+	</pre>
 	</section>
 	<section>
 	<h2>
