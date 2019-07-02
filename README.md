@@ -12,6 +12,14 @@
 	</section>
 	<section>
 	<h2>
+		Getting Started
+	</h2>
+	<code>
+	<script src="https://cdn.jsdelivr.net/gh/Yerikmiller/turpialjs/turpial.min.js"></script>
+	</code>	
+	</section>
+	<section>
+	<h2>
 		Documentation - Index
 	</h2>
 	<ol>
