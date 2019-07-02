@@ -108,6 +108,7 @@ class Turpial
 		// end helpers
 		this.models.fetch = (obj)=>{
 			let type = this.un(obj.type, "script");
+			const options = this.un(obj.options, {cache: this.cache});
 
 			if(typeof obj.ready === "undefined"){obj.ready = ()=>{}}
 			if(typeof obj.file === "string"){var files = [ obj.file ];}
@@ -122,9 +123,8 @@ class Turpial
 				// to not create scripts elements with the same things...
 				// just ignoring or stopping the re-injecting will fail...
 				if(typeof app.filesLoaded[file] !== "undefined" && type === "script")
-				{app.filesLoaded[file].remove()}	
-
-				window.fetch( file, {cache: app.cache} ).then((r)=>{					
+				{app.filesLoaded[file].remove()}
+				window.fetch( file, options ).then((r)=>{					
 					if(typeof obj.error === "function" && r.status !== 200){
 					return obj.error( r.status );
 					}else if( r.status !== 200 ){return;}
