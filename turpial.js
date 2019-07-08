@@ -16,24 +16,6 @@
  * 	@Development Version. V. 1.0.0
  *
 */
-/*
- *	Turpial JS Templating Engine Library V. 1.0.0
- *	Copyright Yorman Maricuto, May 2019.  
- * 	License MIT.
- * 	Social Media/Contact:
- *	@twitter: @MaricutoYorman
- *	@Instagram: maricuto
- *	@email: yerikmiller@gmail.com
- *	@number: +584267886875
- *	@github: yerikmiller
- * 	@project: guide | github.
- *	Micro Framework to create web components and a templating engine for user interfaces (UI).
- *	Turpial: The Venezuela's national bird.
- *
- * 	MADE IN: V E N E Z U E L A.
- * 	@Development Version. V. 1.0.0
- *
-*/
 class Turpial
 {
 	constructor( tpObj = {} )
@@ -534,7 +516,7 @@ class Turpial
 	createTag(el, attrs = "", content = "")
 	{
 		if(typeof attrs === "object"){
-			var attrs = this.settings(attrs);
+			attrs = this.settings(attrs);
 		}
 		let tag  = `<${el}${attrs}>`;
 		tag += content;
