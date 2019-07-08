@@ -16,6 +16,24 @@
  * 	@Development Version. V. 1.0.0
  *
 */
+/*
+ *	Turpial JS Templating Engine Library V. 1.0.0
+ *	Copyright Yorman Maricuto, May 2019.  
+ * 	License MIT.
+ * 	Social Media/Contact:
+ *	@twitter: @MaricutoYorman
+ *	@Instagram: maricuto
+ *	@email: yerikmiller@gmail.com
+ *	@number: +584267886875
+ *	@github: yerikmiller
+ * 	@project: guide | github.
+ *	Micro Framework to create web components and a templating engine for user interfaces (UI).
+ *	Turpial: The Venezuela's national bird.
+ *
+ * 	MADE IN: V E N E Z U E L A.
+ * 	@Development Version. V. 1.0.0
+ *
+*/
 class Turpial
 {
 	constructor( tpObj = {} )
@@ -99,11 +117,9 @@ class Turpial
 		this.urls = {};
 		this.filesLoaded = {};
 		this.inject = async (files)=>{
-			return new Promise(resolve =>{
-				for(const file of files){
-					document.head.appendChild( this.filesLoaded[ file ] );
-				}
-			})
+			for(const file of files){
+				document.head.appendChild( this.filesLoaded[ file ] );
+			}
 		}
 		// end helpers
 		this.models.fetch = (obj)=>{
@@ -118,7 +134,7 @@ class Turpial
 			const loaded = [];
 			let text = [];
 			obj.getString = ( r )=>{return r.clone().text();}
-			obj.fetching =  async ( file )=>{
+			obj.fetching = ( file )=>{
 				// remove if the element exist 
 				// to not create scripts elements with the same things...
 				// just ignoring or stopping the re-injecting will fail...
