@@ -98,7 +98,7 @@ class Turpial
 		this.controller = {};	
 		this.urls = {};
 		this.filesLoaded = {};
-		this.inject = async (files)=>{
+		this.inject = (files)=>{
 			for(const file of files){
 				document.head.appendChild( this.filesLoaded[ file ] );
 			}
