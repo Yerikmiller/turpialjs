@@ -137,13 +137,13 @@ class Turpial
 		}
 		// end helpers
 		this.models.fetch = (obj)=>{
-			let type = this.un(obj.type, "script");
-			const options = this.un(obj.options, {cache: this.cache});
+			let app = this;
+			let type = app.un(obj.type, "script");			
+			const headers = app.un(obj.options, { "Cache-Control": app.cache, "Accept": "text/html" } );
 
 			if(typeof obj.ready === "undefined"){obj.ready = ()=>{}}
 			if(typeof obj.file === "string"){var files = [ obj.file ];}
-			else{var files = obj.file;}		
-			let app = this;
+			else{var files = obj.file;}			
 			const Head = document.head;
 			const loaded = [];
 			let text = [];
@@ -154,24 +154,19 @@ class Turpial
 				// just ignoring or stopping the re-injecting will fail...
 				if(typeof app.filesLoaded[file] !== "undefined" && type === "script")
 				{app.filesLoaded[file].remove()}
-
-			/*	window.fetch( file, options ).then((r)=>{					
-			/ *		if(typeof obj.error === "function" && r.status !== 200){
-			/ *			return obj.error( r.status );
-			/ *		}else if( r.status !== 200 ){return;}
-			/ *		//-> result:
-			/ *		obj.getString(r).then(( resource )=>{
-			/ *			text.push( resource );
-			/ *			var el = document.createElement("script");				
-			/ *			el.text = resource;
-			/ *			app.filesLoaded[ file ] = el;
-			/ *			loaded.push( file );						
-			/ *		});
-				})
-			 */
 				var request = new XMLHttpRequest();				
 				request.open("GET", file, true);
-				request.setRequestHeader( "Cache-Control", app.cache );
+				const options = [];
+				const headersValues = [];
+				for(var header in headers){
+					headersValues.push( headers[header] );
+				}
+				Object.keys(headers).forEach(function(name, k){
+					options.push( [ name, headersValues[k]] )
+				});
+				options.forEach(function(option){					
+					request.setRequestHeader( option[0], option[1] );					
+				})	
 				request.onload = function() {
 				 if (request.status >= 200 && request.status < 400) {
 				 	var resource = request.responseText;
