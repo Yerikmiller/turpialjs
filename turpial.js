@@ -46,6 +46,7 @@ class Turpial
 			}else{return selector;}
 		}
 		// helpers
+		this.ext = ".turpial.js";
 		this.autoloader = this.un( tpObj.autoloader, false );
 		this.autoloader_folder = this.un( tpObj.autoloader_folder, "" );
 		this.cache = this.un( tpObj.cache, "default" );
@@ -56,43 +57,74 @@ class Turpial
 		this.loader.show = this.un( tpObj.loaderShow, null );
 		this.loader.hide = this.un( tpObj.loaderHide, null );
 		this.views = {};
+		this.statusResources = "loaded";
 		this.resources = {};
-		this.Pro = (func)=>{
-			return new Promise( resolve => {
-				func();
-				let get = setInterval(()=>{
-					
-					console.log(func);
-				}, 500);						
-			})
-		}		
+		this.myComponents = [];
 		this.component = {
+			applyProps: ( tag, props )=>{
+				const applying = ()=>{
+					const elements = document.querySelectorAll( tag );
+					// like a spread operator
+					Array.prototype.slice.call(elements). 
+              		forEach(function(el){
+                 		props(el);
+            		})
+				}
+				const implement = ()=>{
+					if(this.statusResources	=== "loading"){
+						var limit = 0;
+						var interval = setInterval(()=>{
+							if(limit > 6000){
+								console.warn("error loading resources and applying components");
+								clearInterval(interval);
+								return;
+							}
+							limit = limit + 20;
+							if(this.statusResources	=== "loaded"){
+								clearInterval(interval);
+								applying( tag, props );
+								return;
+							}
+						}, 20)
+					}else{
+						applying( tag, props );
+						return;
+					}
+				}
+				window.addEventListener("load", ()=>{
+					implement();return;
+				})
+				if(document.readyState === "complete"){
+				implement();return;}			
+			},
 			set: (obj)=>{
 				const app = this;
-				let tag = obj.tag;
-				var extendTo = this.un( obj.extends, null );
-				let get = window.customElements.get(tag);
-				if(typeof get !== "undefined"){return;}
+				const component = app.component;
+				var props = obj.props;
+				var tag = obj.tag;
+				app.myComponents.push( {tag: tag, props: props} );
+				var extendTo = app.un( obj.extends, null );				
 				if(extendTo !== null){extendTo = {extends: extendTo} }
+				if(typeof window.customElements === "undefined"){
+					app.component.olderVerBrow = ()=>{
+
+					}
+					component.applyProps( tag, props );
+					return;
+				}
+				var get = window.customElements.get(tag);
+				if(typeof get !== "undefined"){return;}
 				window.customElements.define(tag, class extends HTMLElement {
 					constructor( props = obj.props ){
 						super(((props)=>{
-							var applyProps = ( tag )=>{
-								const elements = document.getElementsByTagName( tag );
-								[...elements].forEach(function( el ){
-									props( el );
-								});return "ready";
-							}
-							window.addEventListener("load", ()=>{
-								return applyProps( tag );
-							})
-							if(document.readyState === "complete"){return applyProps( tag );}
+							// on load window or document loaded...
+							component.applyProps( tag, props );
 						})(props));						
 					}
 				}, extendTo);
 			}
 		};
-		this.view = {application: this};	
+		this.view = {};
 		this.models = {};
 		this.models.sources = {};
 		this.controller = {};	
@@ -122,20 +154,41 @@ class Turpial
 				// just ignoring or stopping the re-injecting will fail...
 				if(typeof app.filesLoaded[file] !== "undefined" && type === "script")
 				{app.filesLoaded[file].remove()}
-				window.fetch( file, options ).then((r)=>{					
-					if(typeof obj.error === "function" && r.status !== 200){
-					return obj.error( r.status );
-					}else if( r.status !== 200 ){return;}
-					//-> result:
-					obj.getString(r).then(( resource )=>{
-						text.push( resource );
-						var el = document.createElement("script");				
-						el.text = resource;
-						app.filesLoaded[ file ] = el;
-						loaded.push( file );						
-					});
+
+			/*	window.fetch( file, options ).then((r)=>{					
+			/ *		if(typeof obj.error === "function" && r.status !== 200){
+			/ *			return obj.error( r.status );
+			/ *		}else if( r.status !== 200 ){return;}
+			/ *		//-> result:
+			/ *		obj.getString(r).then(( resource )=>{
+			/ *			text.push( resource );
+			/ *			var el = document.createElement("script");				
+			/ *			el.text = resource;
+			/ *			app.filesLoaded[ file ] = el;
+			/ *			loaded.push( file );						
+			/ *		});
 				})
+			 */
+				var request = new XMLHttpRequest();				
+				request.open("GET", file, true);
+				request.setRequestHeader( "Cache-Control", app.cache );
+				request.onload = function() {
+				 if (request.status >= 200 && request.status < 400) {
+				 	var resource = request.responseText;
+				 	text.push( resource );
+					var el = document.createElement("script");				
+					el.text = resource;
+					app.filesLoaded[ file ] = el;
+					loaded.push( file );				 	
+				 }else{
+				 	if(typeof obj.error === "function" && r.status !== 200){
+						return obj.error( request.status );
+					}
+				 }
+				};
+				request.send();
 			}
+			app.statusResources	= "loading";	
 			( (files)=>{
 				for(const file of files){
 					 obj.fetching( file );				
@@ -153,11 +206,11 @@ class Turpial
 						if(type === "script"){
 							app.inject(files);
 							obj.ready();
-							return;	
 						}else if(type === "text"){
-							obj.ready( text );
-							return;	
-						}								
+							obj.ready( text );	
+						}
+						app.statusResources	= "loaded";
+						return;
 					}
 				}, 70)
 			})(files);
@@ -165,19 +218,18 @@ class Turpial
 		this.fetch = (obj)=>{return this.models.fetch(obj)}
 		this.include = (obj)=>{return this.models.fetch(obj)}
 		this.controller.views = {
-			application: this,
-			folder: `${this.folder}views/`,
-			ext: ".turpial.js",
-			path(obj){
-				var self = this;
-				var file_name = obj.views;				
+			path: (obj)=>{
+				const ext = this.ext; 
+				var folder = `${this.folder}views/`;
+				var file_name = obj.views;			
+				var resources = this.resources;	
 				// in case of route.
 				var routing = file_name.split("/");
-				var Path = self.folder;		
+				var Path = folder;		
 				if(routing.length === 1){
 					var file = routing[0];
-					Path += `${file}${self.ext}`;
-					self.application.resources[file] = {}; // create view instance.
+					Path += `${file}${ext}`;
+					resources[file] = {}; // create view instance.
 					return Path;
 				}
 				else{
@@ -187,22 +239,22 @@ class Turpial
 					var penultimate = routing.pop();	
 					var LastFolder = penultimate;
 					var file = last;
-					self.application.resources[LastFolder] = {}; // create view instance.
-					self.application.resources[LastFolder][file] = {}; // create view instance.
+					resources[LastFolder] = {}; // create view instance.
+					resources[LastFolder][file] = {}; // create view instance.
 				}
 				if(routing.length === 0){
-					Path += `${LastFolder}/${file}${self.ext}`;
+					Path += `${LastFolder}/${file}${ext}`;
 				}else{
 					routing.forEach(function(subfolder){
 						Path += `${subfolder}/`
 					});
-					Path += `${LastFolder}/${file}${self.ext}`;
+					Path += `${LastFolder}/${file}${ext}`;
 				}
 				return Path;
 			}
 		};
 		this.view.load = ( obj = { folder: this.autoloader_folder, ready: ()=>{} } )=>{
-			const ext = ".turpial.js";			
+			const ext = this.ext;			
 			const parameters = this.app.parameters;		
 			const controller = this.app.controller_name;
 			const action = this.app.action_name;
@@ -232,14 +284,14 @@ class Turpial
 		};
 		this.controller.routes = {
 			set: ()=>{
-				var self = this;
-				self.app = {};
+				const app = this;
+				app.app = {};
 				var Path = window.location.href.split("?");
 				Path = Path[0];
 				Path = Path.split("#");
-				let SearchPublichPath = Path[0].search(this.public_path);
+				let SearchPublichPath = Path[0].search(app.public_path);
 				if(SearchPublichPath > 0){
-					Path = Path[0].substr( SearchPublichPath + this.public_path.length )
+					Path = Path[0].substr( SearchPublichPath + app.public_path.length )
 				}else{
 					console.warn("bad_public_path_name");
 					return;
@@ -247,23 +299,24 @@ class Turpial
 				var routes = Path.split("/");
 				var n = 0;
 				var param = 0;
-				self.app.parameters = [];			
+				app.app.parameters = [];			
 				routes.forEach(function(route){
 					if(route == ""){return;}					
 					if(n === 0){
-						self.app.controller_name = route;
+						app.app.controller_name = route;
 					}
 					if(n === 1){
-						self.app.action_name = route;
+						app.app.action_name = route;
 					}else if(n > 1){
-						self.app.parameters[ param++ ] = route;
+						app.app.parameters[ param++ ] = route;
 					}
 					n++;
 				})				
-				if(typeof self.app.controller_name === "undefined")
-				{self.app.controller_name = "index";}
+				if(typeof app.app.controller_name === "undefined")
+				{app.app.controller_name = "index";}
 			},
 			change: (obj)=>{
+				const app = this;
 				var href = window.location.href;
 				href = href.split("#");
 				href = href[0];
@@ -272,15 +325,15 @@ class Turpial
 				var d = href.split("/")
 				if(d.pop() === ""){d = ""}
 				else{d = "/";}
-				if( this.searchStr(obj.path, "http") === true ){
+				if( app.searchStr(obj.path, "http") === true ){
 					href = "";
 				}
-				window.history.pushState( this.un( obj.object ),
+				window.history.pushState( app.un( obj.object ),
 										  "",
-										  this.un( `${href}${d}${obj.path}` ) );				
-				this.controller.routes.set();				
-				this.urls.load();
-				let title = this.un( obj.title, false );
+										  app.un( `${href}${d}${obj.path}` ) );				
+				app.controller.routes.set();				
+				app.urls.load();
+				let title = app.un( obj.title, false );
 				if(typeof title === "string"){
 					document.title = title;
 				}
@@ -322,19 +375,20 @@ class Turpial
 		}
 		this.urls = {};
 		this.urls.load = ()=>{
-			const controller = this.app.controller_name;
-			const action = this.app.action_name;
-			const parameters = this.app.parameters;
+			const app = this;
+			const controller = app.app.controller_name;
+			const action = app.app.action_name;
+			const parameters = app.app.parameters;
 			// if this is undefined set as empty...
-			let moduleController = this.un(this.urls[controller], false);
+			let moduleController = app.un(app.urls[controller], false);
 
 			// when url is root or there isn't modules
-			if(moduleController === false){this.view.load(); return;} 
+			if(moduleController === false){app.view.load(); return;} 
 
-			let loadController = this.un(moduleController.loadController, true);
-			let loadAction = this.un(moduleController.loadAction, true);
-			let loadParameters = this.un(moduleController.loadParameters, 1000);
-			let moduleAction = this.un(this.urls[controller][action], false);
+			let loadController = app.un(moduleController.loadController, true);
+			let loadAction = app.un(moduleController.loadAction, true);
+			let loadParameters = app.un(moduleController.loadParameters, 1000);
+			let moduleAction = app.un(app.urls[controller][action], false);
 
 			if(typeof moduleController.self === "function"){
 				if(typeof moduleAction === "function" && loadAction === true){
@@ -342,17 +396,18 @@ class Turpial
 						moduleController.self( ()=>{ moduleAction( ()=>{} ); } )
 						return; 
 					}
-					moduleController.self( ()=>{ moduleAction( ()=>{this.view.load();} ); } )
+					moduleController.self( ()=>{ moduleAction( ()=>{app.view.load();} ); } )
 					return;
 				}else if(loadAction === false && typeof action === "string"){
 					moduleController.self( ()=>{ moduleAction( ()=>{} ); } );
-					return
+					return;
 				}
-				moduleController.self(()=>{this.view.load();})
+				moduleController.self(()=>{app.view.load();})
 				return;
 			}
 		}
 		if(tpObj.autoloader === true){
+
 			window.addEventListener("load", ()=>{				
 				this.urls.load();
 			})
@@ -361,6 +416,18 @@ class Turpial
 				// update routes and reload modules. 
 			  this.controller.routes.set(); // execute routes
 			  this.urls.load();
+			  (function(){
+			  	// just for older browsers
+			  	if(typeof window.customElements === "undefined"){
+			  		Array.prototype.slice.call( this.myComponents )
+			  			.forEach(function(com){
+			  				this.component.set({
+			  					tag: com.tag,
+			  					props: com.props,
+			  				})
+			  			})
+			  	}
+			  })();
 			};
 		}
 	}
@@ -491,20 +558,23 @@ class Turpial
 	}
 	settings(attrs)
 	{
-		if(typeof attrs[0] !== "undefined"){
-			return "";
-		}
+		if(typeof attrs[0] !== "undefined"){return;}
 		var setAttrsValues = [];
-			var i = 0;
-			Object.values(attrs).forEach(function(value){
-				setAttrsValues[i++] = value;
-			});
+		var i = 0;
+
+		var Values = [];
+		for(var value in attrs){
+			Values.push( attrs[value] );
+		}
+		Values.forEach(function(value){
+			setAttrsValues[i++] = value;
+		});
 
 		var setAttrsNames = [];
-			var i = 0;
-			Object.keys(attrs).forEach(function(name){
-				setAttrsNames[i++] = name;
-			});
+		var i = 0;
+		Object.keys(attrs).forEach(function(name){
+			setAttrsNames[i++] = name;
+		});
 
 		var pushAttrs = "";
 			var i = 0;
@@ -527,12 +597,13 @@ class Turpial
 	}
 	html(el, attrs, content)
 	{
+		const replacement = this.replacement;
+		const app = this;	
 		if(el === "code"){
-			content = this.replacement(content, "<", "&lt;");
-			content = this.replacement(content, ">", "&gt;");
-			content = this.replacement(content, " ", "&nbsp;");
-		}
-		var app = this;		
+			content = replacement(content, "<", "&lt;");
+			content = replacement(content, ">", "&gt;");
+			content = replacement(content, " ", "&nbsp;");
+		}			
 		if (typeof content === "undefined"){
 			// si no existen atributos
 			// y existe contenido el esquema puede ser así
@@ -548,7 +619,7 @@ class Turpial
 			content.forEach(function(item, key){
 				elements += `${item}`;
 			});
-			var html = this.createTag(el, attrs, elements);
+			var html = app.createTag(el, attrs, elements);
 		}else if(typeof content === "object"){
 			// si llega a este punto y sigue siendo
 			// un objeto quiere decir que el segundo 
@@ -556,9 +627,9 @@ class Turpial
 			// se puede estar intentando crear un elemento vacío.
 			// por lo tanto content será igual a nada
 			var attrs = content;
-			var html = this.createTag(el, attrs, content = "");			
+			var html = app.createTag(el, attrs, content = "");			
 		}else{
-			var html = this.createTag(el, attrs, content);
+			var html = app.createTag(el, attrs, content);
 		}
 		return html;
 	}
