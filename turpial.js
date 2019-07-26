@@ -49,7 +49,7 @@ class Turpial
 		this.ext = ".turpial.js";
 		this.autoloader = this.un( tpObj.autoloader, false );
 		this.autoloader_folder = this.un( tpObj.autoloader_folder, "" );
-		this.cache = this.un( tpObj.cache, "default" );
+		this.cache = this.un( tpObj.cache, "public" );
 		this.public_path = this.un( tpObj.public_path, "" );
 		this.core_path = this.un( tpObj.core_path, "" );
 		this.folder = this.un( tpObj.core_path, "/turpial/" );
