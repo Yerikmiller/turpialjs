@@ -141,6 +141,10 @@ class Turpial
 			let type = app.un(obj.type, "script");			
 			const headers = app.un(obj.options, { "Cache-Control": app.cache } );
 
+			if(typeof obj.files === "object"){
+				// si existe un array de files
+				obj.file = obj.files;
+			}
 
 			if(typeof obj.ready === "undefined"){obj.ready = ()=>{}}
 			if(typeof obj.file === "string"){var files = [ obj.file ];}
@@ -159,15 +163,18 @@ class Turpial
 				request.open("GET", file, true);
 				const options = [];
 				const headersValues = [];
-				for(var header in headers){
-					headersValues.push( headers[header] );
+
+				if(headers !== null){
+					for(var header in headers){
+						headersValues.push( headers[header] );
+					}
+					Object.keys(headers).forEach(function(name, k){
+						options.push( [ name, headersValues[k]] )
+					});			
+					options.forEach(function(option){					
+						request.setRequestHeader( option[0], option[1] );					
+					})	
 				}
-				Object.keys(headers).forEach(function(name, k){
-					options.push( [ name, headersValues[k]] )
-				});			
-				options.forEach(function(option){					
-					request.setRequestHeader( option[0], option[1] );					
-				})	
 				request.onload = function() {
 				 if (request.status >= 200 && request.status < 400) {
 				 	var resource = request.responseText;
