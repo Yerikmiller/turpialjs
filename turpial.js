@@ -139,16 +139,15 @@ class Turpial
 		this.models.fetch = (obj)=>{
 			let app = this;
 			let type = app.un(obj.type, "script");			
-			const headers = app.un(obj.options, { "Cache-Control": app.cache } );
+			const headers = app.un(obj.options, null );
 
-			if(typeof obj.files === "object"){
-				// si existe un array de files
+			if(typeof obj.files !== "undefined"){
+				// si existe files en vez de file.
 				obj.file = obj.files;
 			}
-
+			var files = obj.file;
 			if(typeof obj.ready === "undefined"){obj.ready = ()=>{}}
-			if(typeof obj.file === "string"){var files = [ obj.file ];}
-			else{var files = obj.file;}			
+			if(typeof files === "string"){files = [ files ];}	
 			const Head = document.head;
 			const loaded = [];
 			let text = [];
@@ -171,7 +170,7 @@ class Turpial
 					Object.keys(headers).forEach(function(name, k){
 						options.push( [ name, headersValues[k]] )
 					});			
-					options.forEach(function(option){					
+					options.forEach(function(option){
 						request.setRequestHeader( option[0], option[1] );					
 					})	
 				}
