@@ -142,8 +142,10 @@ class Turpial
 			const headers = app.un(obj.options, null );
 			const method = app.un(obj.method, "GET" );
 
-			if(typeof obj.data !== "undefined"){
-				obj.file = obj.data;
+			if(typeof obj.data !== "undefined" 
+				&& method === "POST" 
+				&& typeof obj.url !== "undefined"){				
+				obj.file = obj.url;
 			}
 			if(typeof obj.files !== "undefined"){
 				// si existe files en vez de file.
@@ -159,6 +161,7 @@ class Turpial
 			let text = [];
 			obj.getString = ( r )=>{return r.clone().text();}
 			obj.fetching = ( file )=>{
+
 				// remove if the element exist 
 				// to not create scripts elements with the same things...
 				// just ignoring or stopping the re-injecting will fail...
@@ -194,6 +197,11 @@ class Turpial
 					}
 				 }
 				};
+
+				if(method === "POST"){ 
+					request.send( obj.data );
+					return;
+				}
 				request.send();
 			}
 			app.statusResources	= "loading";	
