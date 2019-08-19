@@ -140,12 +140,18 @@ class Turpial
 			let app = this;
 			let type = app.un(obj.type, "script");			
 			const headers = app.un(obj.options, null );
+			const method = app.un(obj.method, "GET" );
 
+			if(typeof obj.data !== "undefined"){
+				obj.file = obj.data;
+			}
 			if(typeof obj.files !== "undefined"){
 				// si existe files en vez de file.
 				obj.file = obj.files;
 			}
+
 			var files = obj.file;
+
 			if(typeof obj.ready === "undefined"){obj.ready = ()=>{}}
 			if(typeof files === "string"){files = [ files ];}	
 			const Head = document.head;
@@ -159,7 +165,7 @@ class Turpial
 				if(typeof app.filesLoaded[file] !== "undefined" && type === "script")
 				{app.filesLoaded[file].remove()}
 				var request = new XMLHttpRequest();				
-				request.open("GET", file, true);
+				request.open(method, file, true);
 				const options = [];
 				const headersValues = [];
 
@@ -209,7 +215,11 @@ class Turpial
 							app.inject(files);
 							obj.ready();
 						}else if(type === "text"){
-							obj.ready( text );	
+							var texts = [];
+							for(var file of files){								
+								texts.push(  app.filesLoaded[file].innerHTML );
+							}
+							obj.ready( texts );	
 						}
 						app.statusResources	= "loaded";
 						return;
