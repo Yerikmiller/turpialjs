@@ -1,19 +1,19 @@
 /*
- *	Turpial JS Templating Engine Library V. 1.0.0
- *	Copyright Yorman Maricuto, May 2019.  
- * 	License MIT.
- * 	Social Media/Contact:
- *	@twitter: @MaricutoYorman
- *	@Instagram: maricuto
- *	@email: yerikmiller@gmail.com
- *	@number: +584267886875
- *	@github: yerikmiller
- * 	@project: guide | github.
- *	Micro Framework to create web components and a templating engine for user interfaces (UI).
- *	Turpial: The Venezuela's national bird.
+ *  Turpial JS Library V. 1.0.0
+ *  Copyright Yorman Maricuto, May 2019.  
+ *  License MIT.
+ *  Social Media/Contact:
+ *  @twitter: @MaricutoYorman
+ *  @Instagram: maricuto
+ *  @email: yerikmiller@gmail.com
+ *  @number: +584267886875
+ *  @github: yerikmiller
+ *  @project: guide | github.
+ *  Micro Library to create web components with a simple template engine for user interfaces (UI).
+ *  Easy XHR connections (POST & GET), inject Scripts and CSS whenever you want and make XHR requests.
+ *  Turpial: The Venezuela's national bird.
  *
- * 	MADE IN: V E N E Z U E L A.
- * 	@Development Version. V. 1.0.0
+ *  MADE IN: V E N E Z U E L A.
  *
 */
 class Turpial
@@ -132,27 +132,24 @@ class Turpial
 		this.filesLoaded = {};
 		this.inject = (files)=>{
 			for(const file of files){
+				if(this.filesLoaded[ file ].tagName === "STYLE"){
+					this.filesLoaded[ file ].innerHTML = this.filesLoaded[ file ].text;
+				}
 				document.head.appendChild( this.filesLoaded[ file ] );
 			}
 		}
 		// end helpers
 		this.models.fetch = (obj)=>{
 			let app = this;
-			let type = app.un(obj.type, "script");			
+			let type = obj.type || "script";			
 			const headers = app.un(obj.options, null );
 			const method = app.un(obj.method, "GET" );
 
-			if(typeof obj.data !== "undefined" 
-				&& method === "POST" 
-				&& typeof obj.url !== "undefined"){				
-				obj.file = obj.url;
-			}
-			if(typeof obj.files !== "undefined"){
-				// si existe files en vez de file.
-				obj.file = obj.files;
-			}
+			obj.url = obj.url || [];
+			obj.file = obj.file || obj.url;
+			obj.files = obj.files || obj.file;
 
-			var files = obj.file;
+			var files = obj.files;
 
 			if(typeof obj.ready === "undefined"){obj.ready = ()=>{}}
 			if(typeof files === "string"){files = [ files ];}	
@@ -187,13 +184,27 @@ class Turpial
 				 if (request.status >= 200 && request.status < 400) {
 				 	var resource = request.responseText;
 				 	text.push( resource );
-					var el = document.createElement("script");				
+				 	var elementTag;
+				 	if(type === "script" || type === "style" || type === "link"){
+				 		elementTag = type;
+				 	}else{
+				 		// if tag name is another than both above.
+				 		elementTag = "script"; 
+				 	}				 	
+					var el = document.createElement(elementTag);
+					if(type === "style"){
+						el.type = "text/css";
+					}else if(type === "link"){
+						el.rel = "stylesheet";
+						el.media = "all";
+						el.href = file;
+					}
 					el.text = resource;
 					app.filesLoaded[ file ] = el;
 					loaded.push( file );				 	
 				 }else{
-				 	if(typeof obj.error === "function" && r.status !== 200){
-						return obj.error( request.status );
+				 	if(typeof obj.onerror === "function" && request.status >= 400){
+						return obj.onerror( request.status );
 					}
 				 }
 				};
@@ -219,7 +230,7 @@ class Turpial
 					}
 					if(loaded.length === files.length || forceLoad === true){
 						clearInterval(check);
-						if(type === "script"){
+						if(type === "script" || type === "style" || type === "link"){							
 							app.inject(files);
 							obj.ready();
 						}else if(type === "text"){
@@ -235,8 +246,16 @@ class Turpial
 				}, 70)
 			})(files);
 		};
-		this.fetch = (obj)=>{return this.models.fetch(obj)}
-		this.include = (obj)=>{return this.models.fetch(obj)}
+		this.fetch = (props)=>{return this.models.fetch(props)}
+		this.include = (props)=>{return this.models.fetch(props)}
+		this.linkCSS = (props)=>{
+			props.type = "link";
+			return this.models.fetch(props)
+		}
+		this.includeCSS = (props)=>{		
+			props.type = "style";
+			return this.models.fetch(props)
+		}
 		this.controller.views = {
 			path: (obj)=>{
 				const ext = this.ext; 

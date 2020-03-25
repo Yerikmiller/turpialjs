@@ -1,5 +1,5 @@
 /*
- *  Turpial JS Templating Engine Library V. 1.0.0
+ *  Turpial JS Library V. 1.0.0
  *  Copyright Yorman Maricuto, May 2019.  
  *  License MIT.
  *  Social Media/Contact:
@@ -9,11 +9,975 @@
  *  @number: +584267886875
  *  @github: yerikmiller
  *  @project: guide | github.
- *  Micro Framework to create web components and a templating engine for user interfaces (UI).
+ *  Micro Library to create web components with a simple template engine for user interfaces (UI).
+ *  Easy XHR connections (POST & GET), inject Scripts and CSS whenever you want and make XHR requests.
  *  Turpial: The Venezuela's national bird.
  *
  *  MADE IN: V E N E Z U E L A.
- *  @Development Version. V. 1.0.0
  *
 */
-"use strict";function _typeof(t){return(_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function _inheritsLoose(t,e){t.prototype=Object.create(e.prototype),t.prototype.constructor=t,t.__proto__=e}function _wrapNativeSuper(t){var e="function"==typeof Map?new Map:void 0;return(_wrapNativeSuper=function(t){if(null===t||!_isNativeFunction(t))return t;if("function"!=typeof t)throw new TypeError("Super expression must either be null or a function");if(void 0!==e){if(e.has(t))return e.get(t);e.set(t,o)}function o(){return _construct(t,arguments,_getPrototypeOf(this).constructor)}return o.prototype=Object.create(t.prototype,{constructor:{value:o,enumerable:!1,writable:!0,configurable:!0}}),_setPrototypeOf(o,t)})(t)}function isNativeReflectConstruct(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Date.prototype.toString.call(Reflect.construct(Date,[],function(){})),!0}catch(t){return!1}}function _construct(t,e,o){return(_construct=isNativeReflectConstruct()?Reflect.construct:function(t,e,o){var r=[null];r.push.apply(r,e);var n=new(Function.bind.apply(t,r));return o&&_setPrototypeOf(n,o.prototype),n}).apply(null,arguments)}function _isNativeFunction(t){return-1!==Function.toString.call(t).indexOf("[native code]")}function _setPrototypeOf(t,e){return(_setPrototypeOf=Object.setPrototypeOf||function(t,e){return t.__proto__=e,t})(t,e)}function _getPrototypeOf(t){return(_getPrototypeOf=Object.setPrototypeOf?Object.getPrototypeOf:function(t){return t.__proto__||Object.getPrototypeOf(t)})(t)}var Turpial=function(){function t(t){var e=this;void 0===t&&(t={}),this.birds=[],this.un=function(t,e){return void 0===e&&(e=""),void 0===t?e:t},this.searchStr=function(t,e,o){void 0===o&&(o=!1);var r=t.search(e);return-1!==r&&(!0!==o||r)},this.replacement=function(t,e,o){return t.split(e).join(o)},this.find=function(t){return"string"==typeof t?document.getElementById(t):t},this.ext=".turpial.js",this.autoloader=this.un(t.autoloader,!1),this.autoloader_folder=this.un(t.autoloader_folder,""),this.cache=this.un(t.cache,"public"),this.public_path=this.un(t.public_path,""),this.core_path=this.un(t.core_path,""),this.folder=this.un(t.core_path,"/turpial/"),this.loader={},this.loader.show=this.un(t.loaderShow,null),this.loader.hide=this.un(t.loaderHide,null),this.views={},this.statusResources="loaded",this.resources={},this.myComponents=[],this.component={applyProps:function(t,o){var r=function(){var e=document.querySelectorAll(t);Array.prototype.slice.call(e).forEach(function(t){o(t)})},n=function(){if("loading"===e.statusResources)var t=0,o=setInterval(function(){return t>6e3?(console.warn("error loading resources and applying components"),void clearInterval(o)):(t+=20,"loaded"===e.statusResources?(clearInterval(o),void r()):void 0)},20);else r()};window.addEventListener("load",function(){n()}),"complete"!==document.readyState||n()},set:function(t){var o=e,r=o.component,n=t.props,i=t.tag;o.myComponents.push({tag:i,props:n});var s=o.un(t.extends,null);if(null!==s&&(s={extends:s}),void 0===window.customElements)return o.component.olderVerBrow=function(){},void r.applyProps(i,n);void 0===window.customElements.get(i)&&window.customElements.define(i,function(e){function o(o){return void 0===o&&(o=t.props),e.call(this,function(t){r.applyProps(i,t)}(o))||this}return _inheritsLoose(o,e),o}(_wrapNativeSuper(HTMLElement)),s)}},this.view={},this.models={},this.models.sources={},this.controller={},this.urls={},this.filesLoaded={},this.inject=function(t){var o=t,r=Array.isArray(o),n=0;for(o=r?o:o[Symbol.iterator]();;){var i;if(r){if(n>=o.length)break;i=o[n++]}else{if((n=o.next()).done)break;i=n.value}var s=i;document.head.appendChild(e.filesLoaded[s])}},this.models.fetch=function(t){var o=e,n=o.un(t.type,"script"),i=o.un(t.options,null),s=o.un(t.method,"GET");void 0!==t.data&&"POST"===s&&void 0!==t.url&&(t.file=t.url),void 0!==t.files&&(t.file=t.files);var a=t.file;void 0===t.ready&&(t.ready=function(){}),"string"==typeof a&&(a=[a]);document.head;var u=[],c=[];t.getString=function(t){return t.clone().text()},t.fetching=function(e){void 0!==o.filesLoaded[e]&&"script"===n&&o.filesLoaded[e].remove();var a=new XMLHttpRequest;a.open(s,e,!0);var l=[],f=[];if(null!==i){for(var p in i)f.push(i[p]);Object.keys(i).forEach(function(t,e){l.push([t,f[e]])}),l.forEach(function(t){a.setRequestHeader(t[0],t[1])})}a.onload=function(){if(a.status>=200&&a.status<400){var n=a.responseText;c.push(n);var i=document.createElement("script");i.text=n,o.filesLoaded[e]=i,u.push(e)}else if("function"==typeof t.error&&200!==r.status)return t.error(a.status)},"POST"!==s?a.send():a.send(t.data)},o.statusResources="loading",function(e){var r=e,i=Array.isArray(r),s=0;for(r=i?r:r[Symbol.iterator]();;){var a;if(i){if(s>=r.length)break;a=r[s++]}else{if((s=r.next()).done)break;a=s.value}var c=a;t.fetching(c)}var l=0,f=setInterval(function(){var r=!1;if(1e4===(l+=70)&&(r=!0,console.warn("¡Impossible to load all files.")),u.length!==e.length&&!0!==r);else{if(clearInterval(f),"script"===n)o.inject(e),t.ready();else if("text"===n){var i=[],s=e,a=Array.isArray(s),c=0;for(s=a?s:s[Symbol.iterator]();;){var p;if(a){if(c>=s.length)break;p=s[c++]}else{if((c=s.next()).done)break;p=c.value}var d=p;i.push(o.filesLoaded[d].innerHTML)}t.ready(i)}o.statusResources="loaded"}},70)}(a)},this.fetch=function(t){return e.models.fetch(t)},this.include=function(t){return e.models.fetch(t)},this.controller.views={path:function(t){var o=e.ext,r=e.folder+"views/",n=t.views,i=e.resources,s=n.split("/"),a=r;if(1===s.length){var u=s[0];return a+=""+u+o,i[u]={},a}var c=s.pop(),l=s.pop();u=c;return i[l]={},i[l][u]={},0===s.length?a+=l+"/"+u+o:(s.forEach(function(t){a+=t+"/"}),a+=l+"/"+u+o),a}},this.view.load=function(t){void 0===t&&(t={folder:e.autoloader_folder,ready:function(){}});var o=e.ext,r=e.app.parameters,n=e.app.controller_name,i=e.app.action_name,s=""+e.folder+t.folder+n;if("index"===n)var a=""+s+o;else if(0===r.length&&"index"!==n&&void 0===i)a=s+"/index"+o;else if(0===r.length&&"undefined"!==i)a=s+"/"+i+"/index"+o;else{a=s+"/"+i;r.forEach(function(t){a+="/"+t}),a+=o}var u={file:a,ready:function(){t.ready()}};"function"==typeof t.error&&(u.error=function(e){t.error(e)}),e.fetch(u),e.DataView=u},this.controller.routes={set:function(){var t=e;t.app={};var o=window.location.href.split("?"),r=(o=(o=o[0]).split("#"))[0].search(t.public_path);if(r>0){var n=(o=o[0].substr(r+t.public_path.length)).split("/"),i=0,s=0;t.app.parameters=[],n.forEach(function(e){""!=e&&(0===i&&(t.app.controller_name=e),1===i?t.app.action_name=e:i>1&&(t.app.parameters[s++]=e),i++)}),void 0===t.app.controller_name&&(t.app.controller_name="index")}else console.warn("bad_public_path_name")},change:function(t){var o=e,r=window.location.href,n=(r=(r=(r=(r=r.split("#"))[0]).split("?"))[0]).split("/");n=""===n.pop()?"":"/",!0===o.searchStr(t.path,"http")&&(r=""),window.history.pushState(o.un(t.object),"",o.un(""+r+n+t.path)),o.controller.routes.set(),o.urls.load();var i=o.un(t.title,!1);"string"==typeof i&&(document.title=i)},go:function(t){if("number"==typeof t)window.history.go(t);else if("back"===t)window.history.back();else{if("forward"!==t)return;window.history.forward()}e.controller.routes.set(),e.urls.load()}},this.router=function(t){"number"!=typeof t&&"string"!=typeof t?e.controller.routes.change(t):e.controller.routes.go(t)},this.routes=this.controller.routes.set,this.routes(),this.controller.components={},this.views.get=function(t){if("object"===_typeof(t)){"string"==typeof t.views&&(t.views=[t.views]);var o=[],r=e.controller.views;t.views.forEach(function(e,n){t.views=e,o[n]=r.path(t)}),Object.assign(t,{file:o,ready:t.ready}),e.fetch(t)}},this.urls={},this.urls.load=function(){var t=e,o=t.app.controller_name,r=t.app.action_name,n=t.app.parameters,i=t.un(t.urls[o],!1);if(!1!==i){t.un(i.loadController,!0);var s=t.un(i.loadAction,!0),a=t.un(i.loadParameters,1e3),u=t.un(t.urls[o][r],!1);return"function"==typeof i.self?"function"==typeof u&&!0===s?n.length>a?void i.self(function(){u(function(){})}):void i.self(function(){u(function(){t.view.load()})}):!1===s&&"string"==typeof r?void i.self(function(){u(function(){})}):void i.self(function(){t.view.load()}):void 0}t.view.load()},!0===t.autoloader&&(window.addEventListener("load",function(){e.urls.load()}),window.onpopstate=function(t){e.controller.routes.set(),e.urls.load(),function(){void 0===window.customElements&&Array.prototype.slice.call(this.myComponents).forEach(function(t){this.component.set({tag:t.tag,props:t.props})})}()})}var e=t.prototype;return e.map=function(t,e){void 0===e&&(e=[]);var o=this.birds[t];if("object"===_typeof(t)?o=t:void 0===o&&(o=this.find(t)),"object"===_typeof(e)){if(void 0===e[0])return o;o=o.children,e.forEach(function(t,r){o=void 0===e[r+1]?o[t]:o[t].children})}return o},e.createMap=function(t){var e=(t=this.find(t)).getAttribute("id");if(void 0!==e){var o=document.getElementById(e);this.birds[e]=o}},e.read=function(t,e){return void 0===e&&(e=[]),this.map(t,e)},e.selectorApp=function(t,e){return void 0===e&&(e=[]),"object"===_typeof(e)&&!0===Number.isInteger(e[0])?this.map(t,e):e},e.delete=function(t){(t=this.find(t)).remove()},e.update=function(t,e,o,r){if(void 0===e&&(e=null),void 0===o&&(o="replace-selector"),void 0===r&&(r=!0),"string"==typeof e)var n=this.render(e),i=e;else n=e;if(null===n){var s=!1;n=e}else s=!0;var a=t;!0===r&&(o="replace-selector");var u=!1,c=a.parentNode;if("before"===o)c.insertBefore(n,a),u=n;else if("after"===o)c.insertBefore(n,a.nextSibling),u=n;else if("replace-selector"===o)c.replaceChild(n,a),u=n;else{if("inner"!==o)return console.warn("error-on-placement"),!1;!0===s?a.innerHTML=i:a.innerText=n,u=a}var l=a;return this.createMap(l),u},e.insert=function(t,e,o){return void 0===o&&(o="inner"),t=this.find(t),this.update(t,e,o,!1)},e.render=function(t){var e=document.createElement("template");return e.innerHTML=t,e=e.content.firstElementChild},e.mount=function(t,e){if("string"==typeof e)e=this.render(e);if(null!==e){var o=(t=this.find(t)).appendChild(e),r=t;return this.createMap(r),o}console.warn("need to be HTML string or object")},e.settings=function(t){if(void 0===t[0]){var e=[],o=0,r=[];for(var n in t)r.push(t[n]);r.forEach(function(t){e[o++]=t});var i=[];o=0;Object.keys(t).forEach(function(t){i[o++]=t});var s="";o=0;return i.forEach(function(t,o){s+=" "+t+'="'+e[o]+'"'}),s}},e.createTag=function(t,e,o){void 0===e&&(e=""),void 0===o&&(o=""),"object"===_typeof(e)&&(e=this.settings(e));var r="<"+t+e+">";return r+=o,"br"!==t&&(r+="</"+t+">"),r},e.html=function(t,e,o){var r=this.replacement;if("code"===t&&(o=r(o,"<","&lt;"),o=r(o,">","&gt;"),o=r(o," ","&nbsp;")),void 0===o)o=e,e="";if("object"===_typeof(o)&&void 0!==o[0]){var n="";o.forEach(function(t,e){n+=""+t});i=this.createTag(t,e,n)}else if("object"===_typeof(o))e=o,i=this.createTag(t,e,o="");else var i=this.createTag(t,e,o);return i},e.el=function(t,e,o){return this.html(t,e,o)},t}();
+"use strict";
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right[Symbol.hasInstance](left); } else { return left instanceof right; } }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/*
+ *	Turpial JS Templating Engine Library V. 1.0.0
+ *	Copyright Yorman Maricuto, May 2019.  
+ * 	License MIT.
+ * 	Social Media/Contact:
+ *	@twitter: @MaricutoYorman
+ *	@Instagram: maricuto
+ *	@email: yerikmiller@gmail.com
+ *	@number: +584267886875
+ *	@github: yerikmiller
+ * 	@project: guide | github.
+ *	Micro Framework to create web components and a templating engine for user interfaces (UI).
+ *	Turpial: The Venezuela's national bird.
+ *
+ * 	MADE IN: V E N E Z U E L A.
+ * 	@Development Version. V. 1.0.0
+ *
+*/
+var Turpial = /*#__PURE__*/function () {
+  function Turpial() {
+    var _this = this;
+
+    var tpObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Turpial);
+
+    // this is for generate
+    // a family tree of birds 
+    // (parents-childrens -> map)
+    // this is is to control realDOM (update-delete-insert-read)
+    this.birds = [];
+
+    this.un = function (v) {
+      var r = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+
+      if (typeof v === "undefined") {
+        return r;
+      } else {
+        return v;
+      }
+    };
+
+    this.searchStr = function (where, what) {
+      var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var search = where.search(what);
+
+      if (search === -1) {
+        return false;
+      }
+
+      if (position === true) {
+        return search;
+      }
+
+      return true;
+    };
+
+    this.replacement = function (target, search, replacement) {
+      return target.split(search).join(replacement);
+    };
+
+    this.find = function (selector) {
+      if (typeof selector === "string") {
+        return document.getElementById(selector);
+      } else {
+        return selector;
+      }
+    }; // helpers
+
+
+    this.ext = ".turpial.js";
+    this.autoloader = this.un(tpObj.autoloader, false);
+    this.autoloader_folder = this.un(tpObj.autoloader_folder, "");
+    this.cache = this.un(tpObj.cache, "public");
+    this.public_path = this.un(tpObj.public_path, "");
+    this.core_path = this.un(tpObj.core_path, "");
+    this.folder = this.un(tpObj.core_path, "/turpial/");
+    this.loader = {};
+    this.loader.show = this.un(tpObj.loaderShow, null);
+    this.loader.hide = this.un(tpObj.loaderHide, null);
+    this.views = {};
+    this.statusResources = "loaded";
+    this.resources = {};
+    this.myComponents = [];
+    this.component = {
+      applyProps: function applyProps(tag, props) {
+        var applying = function applying() {
+          var elements = document.querySelectorAll(tag); // like a spread operator
+
+          Array.prototype.slice.call(elements).forEach(function (el) {
+            props(el);
+          });
+        };
+
+        var implement = function implement() {
+          if (_this.statusResources === "loading") {
+            var limit = 0;
+            var interval = setInterval(function () {
+              if (limit > 6000) {
+                console.warn("error loading resources and applying components");
+                clearInterval(interval);
+                return;
+              }
+
+              limit = limit + 20;
+
+              if (_this.statusResources === "loaded") {
+                clearInterval(interval);
+                applying(tag, props);
+                return;
+              }
+            }, 20);
+          } else {
+            applying(tag, props);
+            return;
+          }
+        };
+
+        window.addEventListener("load", function () {
+          implement();
+          return;
+        });
+
+        if (document.readyState === "complete") {
+          implement();
+          return;
+        }
+      },
+      set: function set(obj) {
+        var app = _this;
+        var component = app.component;
+        var props = obj.props;
+        var tag = obj.tag;
+        app.myComponents.push({
+          tag: tag,
+          props: props
+        });
+        var extendTo = app.un(obj.extends, null);
+
+        if (extendTo !== null) {
+          extendTo = {
+            extends: extendTo
+          };
+        }
+
+        if (typeof window.customElements === "undefined") {
+          app.component.olderVerBrow = function () {};
+
+          component.applyProps(tag, props);
+          return;
+        }
+
+        var get = window.customElements.get(tag);
+
+        if (typeof get !== "undefined") {
+          return;
+        }
+
+        window.customElements.define(tag, /*#__PURE__*/function (_HTMLElement) {
+          _inherits(_class, _HTMLElement);
+
+          var _super = _createSuper(_class);
+
+          function _class() {
+            var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : obj.props;
+
+            _classCallCheck(this, _class);
+
+            return _super.call(this, function (props) {
+              // on load window or document loaded...
+              component.applyProps(tag, props);
+            }(props));
+          }
+
+          return _class;
+        }( /*#__PURE__*/_wrapNativeSuper(HTMLElement)), extendTo);
+      }
+    };
+    this.view = {};
+    this.models = {};
+    this.models.sources = {};
+    this.controller = {};
+    this.urls = {};
+    this.filesLoaded = {};
+
+    this.inject = function (files) {
+      var _iterator = _createForOfIteratorHelper(files),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var file = _step.value;
+
+          if (_this.filesLoaded[file].tagName === "STYLE") {
+            _this.filesLoaded[file].innerHTML = _this.filesLoaded[file].text;
+          }
+
+          document.head.appendChild(_this.filesLoaded[file]);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    }; // end helpers
+
+
+    this.models.fetch = function (obj) {
+      var app = _this;
+      var type = obj.type || "script";
+      var headers = app.un(obj.options, null);
+      var method = app.un(obj.method, "GET");
+      obj.url = obj.url || [];
+      obj.file = obj.file || obj.url;
+      obj.files = obj.files || obj.file;
+      var files = obj.files;
+
+      if (typeof obj.ready === "undefined") {
+        obj.ready = function () {};
+      }
+
+      if (typeof files === "string") {
+        files = [files];
+      }
+
+      var Head = document.head;
+      var loaded = [];
+      var text = [];
+
+      obj.getString = function (r) {
+        return r.clone().text();
+      };
+
+      obj.fetching = function (file) {
+        // remove if the element exist 
+        // to not create scripts elements with the same things...
+        // just ignoring or stopping the re-injecting will fail...
+        if (typeof app.filesLoaded[file] !== "undefined" && type === "script") {
+          app.filesLoaded[file].remove();
+        }
+
+        var request = new XMLHttpRequest();
+        request.open(method, file, true);
+        var options = [];
+        var headersValues = [];
+
+        if (headers !== null) {
+          for (var header in headers) {
+            headersValues.push(headers[header]);
+          }
+
+          Object.keys(headers).forEach(function (name, k) {
+            options.push([name, headersValues[k]]);
+          });
+          options.forEach(function (option) {
+            request.setRequestHeader(option[0], option[1]);
+          });
+        }
+
+        request.onload = function () {
+          if (request.status >= 200 && request.status < 400) {
+            var resource = request.responseText;
+            text.push(resource);
+            var elementTag;
+
+            if (type === "script" || type === "style" || type === "link") {
+              elementTag = type;
+            } else {
+              // if tag name is another than both above.
+              elementTag = "script";
+            }
+
+            var el = document.createElement(elementTag);
+
+            if (type === "style") {
+              el.type = "text/css";
+            } else if (type === "link") {
+              el.rel = "stylesheet";
+              el.media = "all";
+              el.href = file;
+            }
+
+            el.text = resource;
+            app.filesLoaded[file] = el;
+            loaded.push(file);
+          } else {
+            if (typeof obj.onerror === "function" && request.status >= 400) {
+              return obj.onerror(request.status);
+            }
+          }
+        };
+
+        if (method === "POST") {
+          request.send(obj.data);
+          return;
+        }
+
+        request.send();
+      };
+
+      app.statusResources = "loading";
+
+      (function (files) {
+        var _iterator2 = _createForOfIteratorHelper(files),
+            _step2;
+
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var file = _step2.value;
+            obj.fetching(file);
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+
+        var counter = 0;
+        var check = setInterval(function () {
+          counter = counter + 70;
+          var forceLoad = false;
+
+          if (counter === 10000) {
+            forceLoad = true;
+            console.warn("¡Impossible to load all files.");
+          }
+
+          if (loaded.length === files.length || forceLoad === true) {
+            clearInterval(check);
+
+            if (type === "script" || type === "style" || type === "link") {
+              app.inject(files);
+              obj.ready();
+            } else if (type === "text") {
+              var texts = [];
+
+              var _iterator3 = _createForOfIteratorHelper(files),
+                  _step3;
+
+              try {
+                for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                  var file = _step3.value;
+                  texts.push(app.filesLoaded[file].innerHTML);
+                }
+              } catch (err) {
+                _iterator3.e(err);
+              } finally {
+                _iterator3.f();
+              }
+
+              obj.ready(texts);
+            }
+
+            app.statusResources = "loaded";
+            return;
+          }
+        }, 70);
+      })(files);
+    };
+
+    this.fetch = function (props) {
+      return _this.models.fetch(props);
+    };
+
+    this.include = function (props) {
+      return _this.models.fetch(props);
+    };
+
+    this.linkCSS = function (props) {
+      props.type = "link";
+      return _this.models.fetch(props);
+    };
+
+    this.includeCSS = function (props) {
+      props.type = "style";
+      return _this.models.fetch(props);
+    };
+
+    this.controller.views = {
+      path: function path(obj) {
+        var ext = _this.ext;
+        var folder = "".concat(_this.folder, "views/");
+        var file_name = obj.views;
+        var resources = _this.resources; // in case of route.
+
+        var routing = file_name.split("/");
+        var Path = folder;
+
+        if (routing.length === 1) {
+          var file = routing[0];
+          Path += "".concat(file).concat(ext);
+          resources[file] = {}; // create view instance.
+
+          return Path;
+        } else {
+          // file
+          var last = routing.pop(); // last folder
+
+          var penultimate = routing.pop();
+          var LastFolder = penultimate;
+          var file = last;
+          resources[LastFolder] = {}; // create view instance.
+
+          resources[LastFolder][file] = {}; // create view instance.
+        }
+
+        if (routing.length === 0) {
+          Path += "".concat(LastFolder, "/").concat(file).concat(ext);
+        } else {
+          routing.forEach(function (subfolder) {
+            Path += "".concat(subfolder, "/");
+          });
+          Path += "".concat(LastFolder, "/").concat(file).concat(ext);
+        }
+
+        return Path;
+      }
+    };
+
+    this.view.load = function () {
+      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        folder: _this.autoloader_folder,
+        ready: function ready() {}
+      };
+      var ext = _this.ext;
+      var parameters = _this.app.parameters;
+      var controller = _this.app.controller_name;
+      var action = _this.app.action_name;
+      var base = "".concat(_this.folder).concat(obj.folder).concat(controller);
+
+      if (controller === "index") {
+        var urlPath = "".concat(base).concat(ext);
+      } else if (parameters.length === 0 && controller !== "index" && typeof action === "undefined") {
+        var urlPath = "".concat(base, "/index").concat(ext);
+      } else if (parameters.length === 0 && action !== "undefined") {
+        var urlPath = "".concat(base, "/").concat(action, "/index").concat(ext);
+      } else {
+        var urlPath = "".concat(base, "/").concat(action);
+        parameters.forEach(function (parameter) {
+          urlPath += "/".concat(parameter);
+        });
+        urlPath += ext;
+      }
+
+      var data = {
+        file: urlPath,
+        ready: function ready() {
+          obj.ready();
+        }
+      };
+
+      if (typeof obj.error === "function") {
+        data["error"] = function (data) {
+          obj.error(data);
+        };
+      }
+
+      _this.fetch(data);
+
+      _this.DataView = data;
+    };
+
+    this.controller.routes = {
+      set: function set() {
+        var app = _this;
+        app.app = {};
+        var Path = window.location.href.split("?");
+        Path = Path[0];
+        Path = Path.split("#");
+        var SearchPublichPath = Path[0].search(app.public_path);
+
+        if (SearchPublichPath > 0) {
+          Path = Path[0].substr(SearchPublichPath + app.public_path.length);
+        } else {
+          console.warn("bad_public_path_name");
+          return;
+        }
+
+        var routes = Path.split("/");
+        var n = 0;
+        var param = 0;
+        app.app.parameters = [];
+        routes.forEach(function (route) {
+          if (route == "") {
+            return;
+          }
+
+          if (n === 0) {
+            app.app.controller_name = route;
+          }
+
+          if (n === 1) {
+            app.app.action_name = route;
+          } else if (n > 1) {
+            app.app.parameters[param++] = route;
+          }
+
+          n++;
+        });
+
+        if (typeof app.app.controller_name === "undefined") {
+          app.app.controller_name = "index";
+        }
+      },
+      change: function change(obj) {
+        var app = _this;
+        var href = window.location.href;
+        href = href.split("#");
+        href = href[0];
+        href = href.split("?");
+        href = href[0];
+        var d = href.split("/");
+
+        if (d.pop() === "") {
+          d = "";
+        } else {
+          d = "/";
+        }
+
+        if (app.searchStr(obj.path, "http") === true) {
+          href = "";
+        }
+
+        window.history.pushState(app.un(obj.object), "", app.un("".concat(href).concat(d).concat(obj.path)));
+        app.controller.routes.set();
+        app.urls.load();
+        var title = app.un(obj.title, false);
+
+        if (typeof title === "string") {
+          document.title = title;
+        }
+      },
+      go: function go(value) {
+        if (typeof value === "number") {
+          window.history.go(value);
+        } else if (value === "back") {
+          window.history.back();
+        } else if (value === "forward") {
+          window.history.forward();
+        } else {
+          return;
+        }
+
+        _this.controller.routes.set();
+
+        _this.urls.load();
+      }
+    };
+
+    this.router = function (obj) {
+      if (typeof obj === "number" || typeof obj === "string") {
+        _this.controller.routes.go(obj);
+
+        return;
+      }
+
+      _this.controller.routes.change(obj);
+    };
+
+    this.routes = this.controller.routes.set;
+    this.routes(); // execute routes	
+
+    this.controller.components = {};
+
+    this.views.get = function (obj) {
+      if (_typeof(obj) !== "object") {
+        return;
+      }
+
+      if (typeof obj.views === "string") {
+        obj.views = [obj.views];
+      }
+
+      var Paths = [];
+      var controller = _this.controller.views;
+      obj.views.forEach(function (view, key) {
+        obj.views = view;
+        Paths[key] = controller.path(obj);
+      });
+      Object.assign(obj, {
+        file: Paths,
+        ready: obj.ready
+      });
+
+      _this.fetch(obj);
+    };
+
+    this.urls = {};
+
+    this.urls.load = function () {
+      var app = _this;
+      var controller = app.app.controller_name;
+      var action = app.app.action_name;
+      var parameters = app.app.parameters; // if this is undefined set as empty...
+
+      var moduleController = app.un(app.urls[controller], false); // when url is root or there isn't modules
+
+      if (moduleController === false) {
+        app.view.load();
+        return;
+      }
+
+      var loadController = app.un(moduleController.loadController, true);
+      var loadAction = app.un(moduleController.loadAction, true);
+      var loadParameters = app.un(moduleController.loadParameters, 1000);
+      var moduleAction = app.un(app.urls[controller][action], false);
+
+      if (typeof moduleController.self === "function") {
+        if (typeof moduleAction === "function" && loadAction === true) {
+          if (parameters.length > loadParameters) {
+            moduleController.self(function () {
+              moduleAction(function () {});
+            });
+            return;
+          }
+
+          moduleController.self(function () {
+            moduleAction(function () {
+              app.view.load();
+            });
+          });
+          return;
+        } else if (loadAction === false && typeof action === "string") {
+          moduleController.self(function () {
+            moduleAction(function () {});
+          });
+          return;
+        }
+
+        moduleController.self(function () {
+          app.view.load();
+        });
+        return;
+      }
+    };
+
+    if (tpObj.autoloader === true) {
+      window.addEventListener("load", function () {
+        _this.urls.load();
+      });
+
+      window.onpopstate = function (event) {
+        // on window history change
+        // update routes and reload modules. 
+        _this.controller.routes.set(); // execute routes
+
+
+        _this.urls.load();
+
+        (function () {
+          // just for older browsers
+          if (typeof window.customElements === "undefined") {
+            Array.prototype.slice.call(this.myComponents).forEach(function (com) {
+              this.component.set({
+                tag: com.tag,
+                props: com.props
+              });
+            });
+          }
+        })();
+      };
+    }
+  }
+
+  _createClass(Turpial, [{
+    key: "map",
+    value: function map(appName) {
+      var nodes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      var app = this;
+      var map = app.birds[appName];
+
+      if (_typeof(appName) === "object") {
+        map = appName;
+      } else if (typeof map === "undefined") {
+        map = this.find(appName);
+      }
+
+      if (_typeof(nodes) === "object") {
+        if (typeof nodes[0] === "undefined") {
+          return map;
+        }
+
+        map = map.children;
+        nodes.forEach(function (node, key) {
+          if (typeof nodes[key + 1] === "undefined") {
+            map = map[node];
+          } else {
+            map = map[node].children;
+          }
+        });
+      }
+
+      return map;
+    }
+  }, {
+    key: "createMap",
+    value: function createMap(app) {
+      app = this.find(app);
+      var turpial_app_id = app.getAttribute("id");
+
+      if (typeof turpial_app_id !== "undefined") {
+        var realDOMElement = document.getElementById(turpial_app_id);
+        this.birds[turpial_app_id] = realDOMElement;
+      }
+    }
+  }, {
+    key: "read",
+    value: function read(appName) {
+      var nodes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      return this.map(appName, nodes);
+    }
+  }, {
+    key: "selectorApp",
+    value: function selectorApp(appName) {
+      var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+      if (_typeof(selector) === "object") {
+        // searching via map.
+        if (Number.isInteger(selector[0]) === true) {
+          return this.map(appName, selector);
+        } else {
+          return selector;
+        }
+      } else {
+        return selector;
+      }
+    }
+  }, {
+    key: "delete",
+    value: function _delete(selector) {
+      selector = this.find(selector);
+      selector.remove();
+    }
+  }, {
+    key: "update",
+    value: function update(selector) {
+      var insert = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var where = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'replace-selector';
+      var justUpdate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+      if (typeof insert === "string") {
+        var content = this.render(insert);
+        var string = insert;
+      } else {
+        var content = insert;
+      }
+
+      if (content === null) {
+        var isHTML = false;
+        var content = insert;
+      } else {
+        var isHTML = true;
+      } // get the child to insert a new element before or after
+
+
+      var child = selector;
+
+      if (justUpdate === true) {
+        // if the the call is for update
+        where = 'replace-selector';
+      } // get his parent
+
+
+      var output = false;
+      var parent = child.parentNode;
+
+      if (where === "before") {
+        parent.insertBefore(content, child);
+        output = content;
+      } else if (where === "after") {
+        // emulating with next sibling.
+        parent.insertBefore(content, child.nextSibling);
+        output = content;
+      } else if (where === "replace-selector") {
+        // insertar nuevo elemento y eliminar viejo...
+        parent.replaceChild(content, child);
+        output = content;
+      } else if (where === "inner") {
+        if (isHTML === true) {
+          // editar el child
+          child.innerHTML = string;
+        } else {
+          child.innerText = content;
+        }
+
+        output = child;
+      } else {
+        console.warn("error-on-placement");
+        return false;
+      }
+
+      var mapping = child;
+      this.createMap(mapping);
+      return output;
+    }
+  }, {
+    key: "insert",
+    value: function insert(selector, content) {
+      var where = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "inner";
+      selector = this.find(selector);
+      return this.update(selector, content, where, false);
+    }
+  }, {
+    key: "render",
+    value: function render(LiteralsString) {
+      var dom_elem = document.createElement("template");
+      dom_elem.innerHTML = LiteralsString;
+      dom_elem = dom_elem.content.firstElementChild;
+      return dom_elem;
+    }
+  }, {
+    key: "mount",
+    value: function mount(place, things) {
+      if (typeof things === "string") {
+        var things = this.render(things);
+      }
+
+      if (things === null) {
+        console.warn("need to be HTML string or object");
+        return;
+      }
+
+      place = this.find(place);
+      var target = place.appendChild(things);
+      var app = place;
+      this.createMap(app);
+      return target;
+    }
+  }, {
+    key: "settings",
+    value: function settings(attrs) {
+      if (typeof attrs[0] !== "undefined") {
+        return;
+      }
+
+      var setAttrsValues = [];
+      var i = 0;
+      var Values = [];
+
+      for (var value in attrs) {
+        Values.push(attrs[value]);
+      }
+
+      Values.forEach(function (value) {
+        setAttrsValues[i++] = value;
+      });
+      var setAttrsNames = [];
+      var i = 0;
+      Object.keys(attrs).forEach(function (name) {
+        setAttrsNames[i++] = name;
+      });
+      var pushAttrs = "";
+      var i = 0;
+      setAttrsNames.forEach(function (item, key) {
+        pushAttrs += " ".concat(item, "=\"").concat(setAttrsValues[key], "\"");
+      });
+      return pushAttrs;
+    }
+  }, {
+    key: "createTag",
+    value: function createTag(el) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+      var content = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+
+      if (_typeof(attrs) === "object") {
+        attrs = this.settings(attrs);
+      }
+
+      var tag = "<".concat(el).concat(attrs, ">");
+      tag += content;
+
+      if (el !== "br") {
+        tag += "</".concat(el, ">");
+      }
+
+      return tag;
+    }
+  }, {
+    key: "html",
+    value: function html(el, attrs, content) {
+      var replacement = this.replacement;
+      var app = this;
+
+      if (el === "code") {
+        content = replacement(content, "<", "&lt;");
+        content = replacement(content, ">", "&gt;");
+        content = replacement(content, " ", "&nbsp;");
+      }
+
+      if (typeof content === "undefined") {
+        // si no existen atributos
+        // y existe contenido el esquema puede ser así
+        // el($tag, $contenido)
+        // por lo que el contenido ahora es igual al campo atributos.
+        var content = attrs;
+        var attrs = "";
+      }
+
+      if (_typeof(content) === "object" && typeof content[0] !== "undefined") {
+        var elements = "";
+        var i = 0;
+        content.forEach(function (item, key) {
+          elements += "".concat(item);
+        });
+        var html = app.createTag(el, attrs, elements);
+      } else if (_typeof(content) === "object") {
+        // si llega a este punto y sigue siendo
+        // un objeto quiere decir que el segundo 
+        // argumento es un objeto con class id etc.
+        // se puede estar intentando crear un elemento vacío.
+        // por lo tanto content será igual a nada
+        var attrs = content;
+        var html = app.createTag(el, attrs, content = "");
+      } else {
+        var html = app.createTag(el, attrs, content);
+      }
+
+      return html;
+    }
+  }, {
+    key: "el",
+    value: function el(_el, attrs, content) {
+      return this.html(_el, attrs, content);
+    }
+  }]);
+
+  return Turpial;
+}();
