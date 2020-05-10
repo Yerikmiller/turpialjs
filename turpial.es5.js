@@ -17,6 +17,7 @@
  *
 */
 "use strict";
+
 function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right[Symbol.hasInstance](left); } else { return left instanceof right; } }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -54,21 +55,21 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 /*
- *	Turpial JS Templating Engine Library V. 1.0.0
- *	Copyright Yorman Maricuto, May 2019.  
- * 	License MIT.
- * 	Social Media/Contact:
- *	@twitter: @MaricutoYorman
- *	@Instagram: maricuto
- *	@email: yerikmiller@gmail.com
- *	@number: +584267886875
- *	@github: yerikmiller
- * 	@project: guide | github.
- *	Micro Framework to create web components and a templating engine for user interfaces (UI).
- *	Turpial: The Venezuela's national bird.
+ *  Turpial JS Library V. 1.0.0
+ *  Copyright Yorman Maricuto, May 2019.  
+ *  License MIT.
+ *  Social Media/Contact:
+ *  @twitter: @MaricutoYorman
+ *  @Instagram: maricuto
+ *  @email: yerikmiller@gmail.com
+ *  @number: +584267886875
+ *  @github: yerikmiller
+ *  @project: guide | github.
+ *  Micro Library to create web components with a simple template engine for user interfaces (UI).
+ *  Easy XHR connections (POST & GET), inject Scripts and CSS whenever you want and make XHR requests.
+ *  Turpial: The Venezuela's national bird.
  *
- * 	MADE IN: V E N E Z U E L A.
- * 	@Development Version. V. 1.0.0
+ *  MADE IN: V E N E Z U E L A.
  *
 */
 var Turpial = /*#__PURE__*/function () {
@@ -124,6 +125,7 @@ var Turpial = /*#__PURE__*/function () {
 
 
     this.ext = ".turpial.js";
+    this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
     this.autoloader = this.un(tpObj.autoloader, false);
     this.autoloader_folder = this.un(tpObj.autoloader_folder, "");
     this.cache = this.un(tpObj.cache, "public");
@@ -472,8 +474,8 @@ var Turpial = /*#__PURE__*/function () {
       }
     };
 
-    this.view.load = function () {
-      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+    this.view.load = function (props) {
+      props = props || {
         folder: _this.autoloader_folder,
         ready: function ready() {}
       };
@@ -481,7 +483,8 @@ var Turpial = /*#__PURE__*/function () {
       var parameters = _this.app.parameters;
       var controller = _this.app.controller_name;
       var action = _this.app.action_name;
-      var base = "".concat(_this.folder).concat(obj.folder).concat(controller);
+      var base = "".concat(_this.folder).concat(props.folder).concat(controller);
+      props.module = turpial.un(props.module, null);
 
       if (controller === "index") {
         var urlPath = "".concat(base).concat(ext);
@@ -497,22 +500,36 @@ var Turpial = /*#__PURE__*/function () {
         urlPath += ext;
       }
 
+      if (typeof props.module === "string") {
+        props.ext = props.ext || ext;
+        urlPath = _this.core_path + props.module + props.ext;
+      }
+
       var data = {
         file: urlPath,
+        options: props.options || {},
         ready: function ready() {
-          obj.ready();
+          props.ready();
         }
       };
 
-      if (typeof obj.error === "function") {
+      if (typeof props.error === "function") {
         data["error"] = function (data) {
-          obj.error(data);
+          props.error(data);
         };
       }
 
-      _this.fetch(data);
-
       _this.DataView = data;
+
+      if (props.module === "") {
+        return;
+      }
+
+      if (props.module === false) {
+        return;
+      }
+
+      _this.fetch(data);
     };
 
     this.controller.routes = {
@@ -578,7 +595,7 @@ var Turpial = /*#__PURE__*/function () {
 
         window.history.pushState(app.un(obj.object), "", app.un("".concat(href).concat(d).concat(obj.path)));
         app.controller.routes.set();
-        app.urls.load();
+        app.urls.load(obj);
         var title = app.un(obj.title, false);
 
         if (typeof title === "string") {
@@ -610,10 +627,12 @@ var Turpial = /*#__PURE__*/function () {
       }
 
       _this.controller.routes.change(obj);
+
+      _this.stateEvent();
     };
 
     this.routes = this.controller.routes.set;
-    this.routes(); // execute routes	
+    this.routes(); // execute routes  
 
     this.controller.components = {};
 
@@ -642,16 +661,25 @@ var Turpial = /*#__PURE__*/function () {
 
     this.urls = {};
 
-    this.urls.load = function () {
+    this.urls.load = function (obj) {
+      obj = obj || {};
       var app = _this;
       var controller = app.app.controller_name;
       var action = app.app.action_name;
       var parameters = app.app.parameters; // if this is undefined set as empty...
 
-      var moduleController = app.un(app.urls[controller], false); // when url is root or there isn't modules
+      var moduleController = app.urls[controller] || false;
+      obj.module = turpial.un(obj.module, null); // when @turpial.router method is used and 
+      // load a custom JS module/component file.
+
+      if (typeof obj.module === "string") {
+        app.view.load(obj);
+        return;
+      } // when url is root or there isn't modules
+
 
       if (moduleController === false) {
-        app.view.load();
+        app.view.load(obj);
         return;
       }
 
@@ -671,7 +699,7 @@ var Turpial = /*#__PURE__*/function () {
 
           moduleController.self(function () {
             moduleAction(function () {
-              app.view.load();
+              app.view.load(obj);
             });
           });
           return;
@@ -683,11 +711,62 @@ var Turpial = /*#__PURE__*/function () {
         }
 
         moduleController.self(function () {
-          app.view.load();
+          app.view.load(obj);
         });
         return;
       }
     };
+
+    this.historyEvents = {};
+
+    this.URLNoHASH = function (url) {
+      return url.split("#")[0];
+    };
+
+    this.createHistoryEvent = function (position, callback) {
+      var main = this.URLNoHASH(window.location.href);
+      position = position || "";
+      position = main + position;
+      this.historyEvents[position] = callback;
+      /* @HOW TO USE HISTORY VIEWS.
+       * you need to create new history events for actual position history
+       * you can rename index position to trigger a function when back history
+       * action was executed.
+       * 
+       * ex: you can create history events like: 
+       * @index-> localhost/myweb
+       * when you create an application that generate a different view
+       * and generating new html elements and change history wirh router.
+       * you can add it to history event views to generate 
+       * a callback function when history has that location path.
+       *
+       * You need to set @allowStateEvents to true to trigger this turpial function.
+       * 
+       * note: turpial will trigger index or main view in the position you have
+       * for example if the page load at: myweb.com/portfolio/
+       * that point will be considered like a main position view.
+       * @you can rename index if you left empty url position
+       *  value on createHistoryEvent method.
+       * @you can create another view like myweb.com/portfolio/client-1 naming
+       *  position url like "/client-1"
+       *  note the "/" sign at the beginning
+       * @set the function to be executed on callback in second value property.
+      */
+    };
+
+    this.createHistoryEvent("", function () {});
+
+    this.stateEvent = function () {
+      var event = _this.historyEvents;
+
+      if (typeof event[_this.URLNoHASH(window.location.href)] === "function") {
+        event[_this.URLNoHASH(window.location.href)]();
+      }
+    };
+
+    if (this.allowStateEvents === true) {
+      window.addEventListener("popstate", this.stateEvent);
+    }
 
     if (tpObj.autoloader === true) {
       window.addEventListener("load", function () {

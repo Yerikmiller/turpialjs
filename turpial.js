@@ -47,6 +47,7 @@ class Turpial
 		}
 		// helpers
 		this.ext = ".turpial.js";
+		this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
 		this.autoloader = this.un( tpObj.autoloader, false );
 		this.autoloader_folder = this.un( tpObj.autoloader_folder, "" );
 		this.cache = this.un( tpObj.cache, "public" );
@@ -292,12 +293,15 @@ class Turpial
 				return Path;
 			}
 		};
-		this.view.load = ( obj = { folder: this.autoloader_folder, ready: ()=>{} } )=>{
+		this.view.load = ( props )=>{
+			props = props || { folder: this.autoloader_folder, ready: ()=>{} };
 			const ext = this.ext;			
 			const parameters = this.app.parameters;		
 			const controller = this.app.controller_name;
 			const action = this.app.action_name;
-			const base = `${this.folder}${obj.folder}${controller}`;
+			const base = `${this.folder}${props.folder}${controller}`;
+			props.module = turpial.un(props.module, null);
+
 			if(controller === "index"){
 				var urlPath =  `${base}${ext}`;
 			}else if(parameters.length === 0 && controller !== "index" && typeof action === "undefined"){
@@ -310,16 +314,24 @@ class Turpial
 					urlPath += `/${parameter}`;
 				})
 				urlPath += ext;
+			}	
+			if(typeof props.module === "string"){
+				props.ext = props.ext || ext
+				urlPath = this.core_path+props.module+props.ext;
 			}
+
 			var data = {
 				file: urlPath,
-				ready: ()=>{ obj.ready() },
+				options: props.options || {},
+				ready: ()=>{ props.ready() },
 			};
-			if(typeof obj.error === "function"){
-				data["error"] = (data)=>{ obj.error(data) };
-			}			
-			this.fetch( data );
+			if(typeof props.error === "function"){
+				data["error"] = (data)=>{ props.error(data) };
+			}
 			this.DataView = data;
+			if(props.module === ""){ return; }
+			if(props.module === false){ return; }
+			this.fetch( data );			
 		};
 		this.controller.routes = {
 			set: ()=>{
@@ -370,8 +382,8 @@ class Turpial
 				window.history.pushState( app.un( obj.object ),
 										  "",
 										  app.un( `${href}${d}${obj.path}` ) );				
-				app.controller.routes.set();				
-				app.urls.load();
+				app.controller.routes.set();
+				app.urls.load(obj);
 				let title = app.un( obj.title, false );
 				if(typeof title === "string"){
 					document.title = title;
@@ -391,10 +403,11 @@ class Turpial
 		}
 		this.router = (obj)=>{
 			if(typeof obj === "number" || typeof obj === "string"){
-				this.controller.routes.go( obj )
+				this.controller.routes.go( obj );
 				return;
 			}
-			this.controller.routes.change( obj )			
+			this.controller.routes.change( obj );
+			this.stateEvent();
 		};
 		this.routes = this.controller.routes.set;
 		this.routes(); // execute routes	
@@ -414,16 +427,23 @@ class Turpial
 			this.fetch(obj);
 		}
 		this.urls = {};
-		this.urls.load = ()=>{
+		this.urls.load = (obj)=>{
+			obj = obj || {};
 			const app = this;
 			const controller = app.app.controller_name;
 			const action = app.app.action_name;
 			const parameters = app.app.parameters;
 			// if this is undefined set as empty...
-			let moduleController = app.un(app.urls[controller], false);
+			let moduleController = app.urls[controller] || false;
+			obj.module = turpial.un(obj.module, null);
+
+
+			// when @turpial.router method is used and 
+			// load a custom JS module/component file.
+			if(typeof obj.module === "string"){app.view.load(obj); return;} 
 
 			// when url is root or there isn't modules
-			if(moduleController === false){app.view.load(); return;} 
+			if(moduleController === false){app.view.load(obj); return;} 
 
 			let loadController = app.un(moduleController.loadController, true);
 			let loadAction = app.un(moduleController.loadAction, true);
@@ -436,16 +456,60 @@ class Turpial
 						moduleController.self( ()=>{ moduleAction( ()=>{} ); } )
 						return; 
 					}
-					moduleController.self( ()=>{ moduleAction( ()=>{app.view.load();} ); } )
+					moduleController.self( ()=>{ moduleAction( ()=>{app.view.load(obj);} ); } )
 					return;
 				}else if(loadAction === false && typeof action === "string"){
 					moduleController.self( ()=>{ moduleAction( ()=>{} ); } );
 					return;
 				}
-				moduleController.self(()=>{app.view.load();})
+				moduleController.self(()=>{app.view.load(obj);})
 				return;
 			}
 		}
+		this.historyEvents = {};
+		this.URLNoHASH = function(url){
+			return url.split("#")[0];
+		}
+		this.createHistoryEvent = function(position, callback){
+			var main = this.URLNoHASH(window.location.href);
+			position = position || "";
+			position = main+position;
+			this.historyEvents[position] = callback;
+			/* @HOW TO USE HISTORY VIEWS.
+			 * you need to create new history events for actual position history
+			 * you can rename index position to trigger a function when back history
+			 * action was executed.
+			 * 
+			 * ex: you can create history events like: 
+			 * @index-> localhost/myweb
+			 * when you create an application that generate a different view
+			 * and generating new html elements and change history wirh router.
+			 * you can add it to history event views to generate 
+			 * a callback function when history has that location path.
+			 *
+			 * You need to set @allowStateEvents to true to trigger this turpial function.
+			 * 
+			 * note: turpial will trigger index or main view in the position you have
+			 * for example if the page load at: myweb.com/portfolio/
+			 * that point will be considered like a main position view.
+			 * @you can rename index if you left empty url position
+			 *  value on createHistoryEvent method.
+			 * @you can create another view like myweb.com/portfolio/client-1 naming
+			 *  position url like "/client-1"
+			 *  note the "/" sign at the beginning
+			 * @set the function to be executed on callback in second value property.
+			*/
+		}
+		this.createHistoryEvent("", function(){});
+		this.stateEvent = () =>{
+			var event = this.historyEvents;
+			if(typeof event[this.URLNoHASH(window.location.href)] === "function"){
+				event[this.URLNoHASH(window.location.href)]();
+			}
+		}
+		if(this.allowStateEvents === true){
+			window.addEventListener("popstate", this.stateEvent);
+		}		
 		if(tpObj.autoloader === true){
 
 			window.addEventListener("load", ()=>{				
