@@ -133,12 +133,41 @@ var Turpial = /*#__PURE__*/function () {
     this.core_path = this.un(tpObj.core_path, "");
     this.folder = this.un(tpObj.core_path, "/turpial/");
     this.loader = {};
+    this.httpRequests = [];
     this.loader.show = this.un(tpObj.loaderShow, null);
     this.loader.hide = this.un(tpObj.loaderHide, null);
     this.views = {};
     this.statusResources = "loaded";
     this.resources = {};
     this.myComponents = [];
+
+    this.random_string = function (length) {
+      "undefined" == typeof length && (length = 6);
+
+      for (var result = "", characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", charactersLength = characters.length, i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+
+      return result;
+    };
+
+    this.selectData = function (arr, item, value, return_key) {
+      return_key = turpial.un(return_key, false);
+      var get = "";
+      arr.forEach(function (dta, key) {
+        if (dta[item] == value) {
+          if (return_key === true) {
+            get = key;
+            return;
+          } else {
+            get = dta;
+            return;
+          }
+        }
+      });
+      return get;
+    };
+
     this.component = {
       applyProps: function applyProps(tag, props) {
         var applying = function applying() {
@@ -265,6 +294,7 @@ var Turpial = /*#__PURE__*/function () {
     this.models.fetch = function (obj) {
       var app = _this;
       var type = obj.type || "script";
+      var save = app.un(obj.save, null);
       var headers = app.un(obj.options, null);
       var method = app.un(obj.method, "GET");
       obj.url = obj.url || [];
@@ -346,6 +376,21 @@ var Turpial = /*#__PURE__*/function () {
             }
           }
         };
+
+        if (save === true) {
+          var idRequest = "rq_" + app.un(obj.id, app.random_string(4));
+          var rq = app.httpRequests[idRequest];
+
+          if (typeof rq !== "undefined") {
+            try {
+              app.httpRequests[idRequest].abort();
+            } catch (e) {
+              console.warn("unable to cancel request.");
+            }
+          }
+
+          app.httpRequests[idRequest] = request;
+        }
 
         if (method === "POST") {
           request.send(obj.data);

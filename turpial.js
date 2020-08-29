@@ -55,12 +55,34 @@ class Turpial
 		this.core_path = this.un( tpObj.core_path, "" );
 		this.folder = this.un( tpObj.core_path, "/turpial/" );
 		this.loader = {};
+		this.httpRequests = [];
 		this.loader.show = this.un( tpObj.loaderShow, null );
 		this.loader.hide = this.un( tpObj.loaderHide, null );
 		this.views = {};
 		this.statusResources = "loaded";
 		this.resources = {};
 		this.myComponents = [];
+		this.random_string = (length) => {
+			"undefined"==typeof length&&(length=6);for(var result="",characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",charactersLength=characters.length,i=0;i<length;i++)result+=characters.charAt(Math.floor(Math.random()*charactersLength));
+			return result;
+		}
+		this.selectData = ( arr, item, value, return_key )=> {
+			return_key = turpial.un(return_key, false);
+			var get = "";
+			arr.forEach(function( dta, key ){	
+				if(dta[item] == value){
+
+					if(return_key === true){
+						get = key;
+						return;
+					}else{
+						get = dta;
+						return;
+					}				
+				}
+			})
+			return get;
+		}
 		this.component = {
 			applyProps: ( tag, props )=>{
 				const applying = ()=>{
@@ -142,7 +164,8 @@ class Turpial
 		// end helpers
 		this.models.fetch = (obj)=>{
 			let app = this;
-			let type = obj.type || "script";			
+			let type = obj.type || "script";
+			const save =	app.un(obj.save, null );
 			const headers = app.un(obj.options, null );
 			const method = app.un(obj.method, "GET" );
 
@@ -209,7 +232,18 @@ class Turpial
 					}
 				 }
 				};
-
+				if(save === true){
+					let idRequest = "rq_"+app.un(obj.id, app.random_string(4));
+					let rq = app.httpRequests[idRequest];
+					if(typeof rq !== "undefined"){
+						try{
+							app.httpRequests[idRequest].abort();
+						} catch(e){
+							console.warn("unable to cancel request.");
+						}
+					}
+					app.httpRequests[idRequest] = request;
+				}			
 				if(method === "POST"){ 
 					request.send( obj.data );
 					return;
