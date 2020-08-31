@@ -165,7 +165,7 @@ class Turpial
 		this.models.fetch = (obj)=>{
 			let app = this;
 			let type = obj.type || "script";
-			const save =	app.un(obj.save, null );
+			const cancelOnResend =	app.un(obj.cancelOnResend, null );
 			const headers = app.un(obj.options, null );
 			const method = app.un(obj.method, "GET" );
 
@@ -232,7 +232,7 @@ class Turpial
 					}
 				 }
 				};
-				if(save === true){
+				if(cancelOnResend === true){
 					let idRequest = "rq_"+app.un(obj.id, app.random_string(4));
 					let rq = app.httpRequests[idRequest];
 					if(typeof rq !== "undefined"){

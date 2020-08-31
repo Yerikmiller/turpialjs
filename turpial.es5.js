@@ -1,21 +1,3 @@
-/*
- *  Turpial JS Library V. 1.0.0
- *  Copyright Yorman Maricuto, May 2019.  
- *  License MIT.
- *  Social Media/Contact:
- *  @twitter: @MaricutoYorman
- *  @Instagram: maricuto
- *  @email: yerikmiller@gmail.com
- *  @number: +584267886875
- *  @github: yerikmiller
- *  @project: guide | github.
- *  Micro Library to create web components with a simple template engine for user interfaces (UI).
- *  Easy XHR connections (POST & GET), inject Scripts and CSS whenever you want and make XHR requests.
- *  Turpial: The Venezuela's national bird.
- *
- *  MADE IN: V E N E Z U E L A.
- *
-*/
 "use strict";
 
 function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right[Symbol.hasInstance](left); } else { return left instanceof right; } }
@@ -294,7 +276,7 @@ var Turpial = /*#__PURE__*/function () {
     this.models.fetch = function (obj) {
       var app = _this;
       var type = obj.type || "script";
-      var save = app.un(obj.save, null);
+      var cancelOnResend = app.un(obj.cancelOnResend, null);
       var headers = app.un(obj.options, null);
       var method = app.un(obj.method, "GET");
       obj.url = obj.url || [];
@@ -377,7 +359,7 @@ var Turpial = /*#__PURE__*/function () {
           }
         };
 
-        if (save === true) {
+        if (cancelOnResend === true) {
           var idRequest = "rq_" + app.un(obj.id, app.random_string(4));
           var rq = app.httpRequests[idRequest];
 
