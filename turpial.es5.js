@@ -294,6 +294,7 @@ var Turpial = /*#__PURE__*/function () {
 
       var Head = document.head;
       var loaded = [];
+      var unloaded = [];
       var text = [];
 
       obj.getString = function (r) {
@@ -357,6 +358,12 @@ var Turpial = /*#__PURE__*/function () {
               return obj.onerror(request.status);
             }
           }
+        };
+
+        request.onerror = function () {
+          app.filesLoaded[file] = "";
+          loaded.push("unloaded:" + file);
+          unloaded.push(file);
         };
 
         if (cancelOnResend === true) {

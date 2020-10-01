@@ -179,6 +179,7 @@ class Turpial
 			if(typeof files === "string"){files = [ files ];}	
 			const Head = document.head;
 			const loaded = [];
+			const unloaded = [];
 			let text = [];
 			obj.getString = ( r )=>{return r.clone().text();}
 			obj.fetching = ( file )=>{
@@ -232,6 +233,11 @@ class Turpial
 					}
 				 }
 				};
+				request.onerror = function(){
+					app.filesLoaded[ file ] = "";
+					loaded.push( "unloaded:"+file );
+					unloaded.push( file );
+				}
 				if(cancelOnResend === true){
 					let idRequest = "rq_"+app.un(obj.id, app.random_string(4));
 					let rq = app.httpRequests[idRequest];
@@ -270,7 +276,7 @@ class Turpial
 							obj.ready();
 						}else if(type === "text"){
 							var texts = [];
-							for(var file of files){								
+							for(var file of files){
 								texts.push(  app.filesLoaded[file].innerHTML );
 							}
 							obj.ready( texts );	
