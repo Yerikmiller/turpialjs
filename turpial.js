@@ -574,6 +574,83 @@ class Turpial
 			  })();
 			};
 		}
+
+		this.template = (html, replacemets)=>{
+			const engine = {
+				run: function( html, replacemets ){
+					replacemets = replacemets||[];
+					if(typeof replacemets === "object" && !Array.isArray(replacemets)){
+						var reArrange = [];
+						Object.values(replacemets).map(( element, number )=>{
+						    reArrange.push({[Object.keys(replacemets)[number]]: element})
+						})
+						replacemets = reArrange;
+
+					}
+					if(typeof html === "object"){ html = html.innerHTML }
+					var template = function(template, searchall, replaceby){
+						return template.split(searchall).join(replaceby);
+					}
+					var structure = html;		
+					replacemets.forEach(function( replacement ){
+						var items = Object.keys(replacement);
+						var values = Object.values(replacement);
+						items.forEach(function( item, key ){						
+							item = `{{ ${item} }}`;
+							if(html.search(item) >= 0){
+								structure = template(structure, item, values[key]);
+							}						
+						})
+					})
+					return structure;
+				},
+				replace: function( item, replacement, HTML ){
+					item = `{{ ${item} }}`;
+					HTML = HTML.split(item).join(replacement);
+					return HTML;
+				},
+				joinMoreElements: function(target, elements){
+					Object.values(elements).forEach(function(element, key){					
+						target[Object.keys(elements)[key]] = element;
+					})
+					return target;
+				},
+				toHTML: function( target, strings ){
+					if(target !== false){
+						target.innerHTML = strings;
+						target = target.content.firstElementChild;		
+						return target;
+					}else{
+						turpial.render()
+					}	
+					
+				},
+				toString: function( target, html ){
+					html = html.cloneNode(true);
+					var dom_elem = target;
+					dom_elem.innerHTML = "<div></div>";
+					dom_elem = dom_elem.content.firstElementChild;
+					dom_elem.appendChild(html);
+					return dom_elem.innerHTML;
+				},
+				create: function( element, replacements ){
+					var app = this;
+					// start with "div" after template tag.		
+					var content = turpial.find(element).content.firstElementChild;
+					// this is to fill it, after finish the process.
+					var container = content.cloneNode( true );
+					var getHTMLText = content.innerHTML;
+					var eraseEls = [];		
+					Object.keys(replacements).forEach(function( item, key ){
+						getHTMLText = app.replace(item, Object.values(replacements)[key], getHTMLText);		
+					})
+					// PUSH INTO THE CLONDED
+					container.innerHTML = getHTMLText;
+					return container;
+				}
+			}
+			return engine.run(html, replacemets);
+		}
 	}
 	map(appName, nodes = [])
 	{
