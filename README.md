@@ -7,7 +7,7 @@
 		<img style="margin:auto" src="http://maricuto.website/default/public/html_base/img/projects/turpial-logo.svg" alt="Turpial JS - Micro Javascript Framework to create SPA easily">
 	</div>
 	<p>
-		Turpial JS is a micro framework and library with a set of tools to create web applications faster. Templating engines with JSX syntax. Create, load, and use components; load dependencies sequentially whenever you want in your app, and also load files <strong>(components, views, JS files)</strong> based on the URLs. Update views easily and develop a single page application in a few steps.
+		Turpial JS is a micro library with a set of tools to create web applications. Templating engines with JSX syntax. Create, load, and use components; load dependencies sequentially whenever you want in your app, and also load files <strong>(components, views, JS files)</strong> based on the URLs. Update views easily and develop a single page application in a few steps.
 	</p>
 	</section>
 	<section>
