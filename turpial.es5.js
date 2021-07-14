@@ -465,6 +465,7 @@ var Turpial = /*#__PURE__*/function () {
       props.files.map(function (file) {
         var link = document.createElement("link");
         link.setAttribute("media", "all");
+        link.setAttribute("rel", "stylesheet");
         link.href = file;
         var el = app.mount(document.head, link);
         nodes.push(el);
