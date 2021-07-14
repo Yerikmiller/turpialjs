@@ -1,20 +1,15 @@
 /*
- *  Turpial JS Library V. 1.0.0
- *  Copyright Yorman Maricuto, May 2019.  
- *  License MIT.
- *  Social Media/Contact:
- *  @twitter: @MaricutoYorman
- *  @Instagram: maricuto
- *  @email: yerikmiller@gmail.com
- *  @number: +584267886875
- *  @github: yerikmiller
- *  @project: guide | github.
- *  Micro Library to create web components with a simple template engine for user interfaces (UI).
- *  Easy XHR connections (POST & GET), inject Scripts and CSS whenever you want and make XHR requests.
- *  Turpial: The Venezuela's national bird.
- *
- *  MADE IN: V E N E Z U E L A.
- *
+  _______ _    _ _____  _____ _____          _             _  _____ 
+ |__   __| |  | |  __ \|  __ \_   _|   /\   | |           | |/ ____|
+    | |  | |  | | |__) | |__) || |    /  \  | |           | | (___  
+    | |  | |  | |  _  /|  ___/ | |   / /\ \ | |       _   | |\___ \ 
+    | |  | |__| | | \ \| |    _| |_ / ____ \| |____  | |__| |____) |
+    |_|   \____/|_|  \_\_|   |_____/_/    \_\______|  \____/|_____/ 
+    * Turpial JS Library V. 1.0.0
+    * License: MIT.
+    * Copyright Yorman Maricuto, May 2019.
+    * @twitter: @MaricutoYorman, @Instagram: maricuto
+    * Micro-Library to create web components, multi-fetch elements, append styles, scripts, templating engine JSX
 */
 class Turpial
 {
@@ -291,7 +286,22 @@ class Turpial
 		this.include = (props)=>{return this.models.fetch(props)}
 		this.linkCSS = (props)=>{
 			props.type = "link";
-			return this.models.fetch(props)
+			var app = this;	
+			props.type = "style";
+			props.url = props.url||[];
+			props.file = props.file || props.url;
+			props.files = props.files || props.file;
+			var nodes = [];
+			props.files.map((file)=>{
+				var link = document.createElement("link");
+				link.setAttribute("media", "all");
+				link.href = file;
+				var el = app.mount(document.head, link);
+				nodes.push(el);
+			})
+			props.ready(nodes);
+			return nodes;
+			// return this.models.fetch(props)
 		}
 		this.includeCSS = (props)=>{		
 			props.type = "style";
