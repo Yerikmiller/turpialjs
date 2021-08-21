@@ -43,6 +43,7 @@ class Turpial
 		// helpers
 		this.ext = ".turpial.js";
 		this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
+		this.loadModulesOnRoute = this.un(tpObj.loadModulesOnRoute, true);
 		this.autoloader = this.un( tpObj.autoloader, false );
 		this.autoloader_folder = this.un( tpObj.autoloader_folder, "" );
 		this.cache = this.un( tpObj.cache, "public" );
@@ -345,14 +346,15 @@ class Turpial
 			}
 		};
 		this.view.load = ( props )=>{
-			props = props || { folder: this.autoloader_folder, ready: ()=>{} };
+			props = props||{};
+			props.ready = props.ready||function(){}; 
+			props.folder = this.autoloader_folder||"";
 			const ext = this.ext;			
 			const parameters = this.app.parameters;		
 			const controller = this.app.controller_name;
 			const action = this.app.action_name;
 			const base = `${this.folder}${props.folder}${controller}`;
 			props.module = turpial.un(props.module, null);
-
 			if(controller === "index"){
 				var urlPath =  `${base}${ext}`;
 			}else if(parameters.length === 0 && controller !== "index" && typeof action === "undefined"){
@@ -385,6 +387,44 @@ class Turpial
 			this.fetch( data );			
 		};
 		this.controller.routes = {
+			getHost: (props)=>{
+				const app = this;
+				props = props||{};
+
+				if(props.loadModule === false || app.loadModulesOnRoute === false){
+					props.relativeModules = true;
+				}
+				var href = window.location.href;
+				href = href.split("#");
+				href = href[0];
+				href = href.split("?");
+				href = href[0];
+
+				/*if( app.searchStr(obj.path, "http") === true ){
+					href = "";
+				}*/
+				let relativeModules = app.un(props.relativeModules, false);
+
+				// search for dynamic host.
+				let position = href.search(app.public_path);
+				let Host = href.slice(position, position+app.public_path.length);
+				Host = href.split(Host)[0]+Host;
+
+				var slash = Host.slice(-1)
+				if(slash !== "/"){slash = "/"}
+				else{slash = "";}
+				if(relativeModules == true){
+					return `${Host}${slash}`;
+				}else{
+					slash = href.slice(-1)
+					if(slash !== "/"){slash = "/"}
+					else{slash = "";}
+					return `${href}${slash}`;
+				}
+
+				// old output: `${href}${d}${obj.path}`
+				
+			},
 			set: ()=>{
 				const app = this;
 				app.app = {};
@@ -416,25 +456,23 @@ class Turpial
 				})				
 				if(typeof app.app.controller_name === "undefined")
 				{app.app.controller_name = "index";}
+				app.host = app.controller.routes.getHost();
 			},
-			change: (obj)=>{
+			change: ( obj )=>{
 				const app = this;
-				var href = window.location.href;
-				href = href.split("#");
-				href = href[0];
-				href = href.split("?");
-				href = href[0];
-				var d = href.split("/")
-				if(d.pop() === ""){d = ""}
-				else{d = "/";}
-				if( app.searchStr(obj.path, "http") === true ){
-					href = "";
-				}
+				obj.loadModule = app.un(obj.loadModule, true);
+
+				let output = `${app.controller.routes.getHost( obj )}${obj.path}`;
+
+				if(output === window.location.href){ return; }
+				
 				window.history.pushState( app.un( obj.object ),
 										  "",
-										  app.un( `${href}${d}${obj.path}` ) );				
+										  app.un( output ) );				
 				app.controller.routes.set();
-				app.urls.load(obj);
+				if(obj.loadModule === true || app.loadModulesOnRoute === false){
+					app.urls.load(obj);
+				}
 				let title = app.un( obj.title, false );
 				if(typeof title === "string"){
 					document.title = title;
@@ -452,13 +490,15 @@ class Turpial
 				this.urls.load();
 			}
 		}
-		this.router = (obj)=>{
+		this.router = (obj, ready)=>{
+			ready = ready||function(){};
 			if(typeof obj === "number" || typeof obj === "string"){
 				this.controller.routes.go( obj );
 				return;
 			}
 			this.controller.routes.change( obj );
 			this.stateEvent();
+			ready();
 		};
 		this.routes = this.controller.routes.set;
 		this.routes(); // execute routes	
@@ -513,6 +553,7 @@ class Turpial
 					moduleController.self( ()=>{ moduleAction( ()=>{} ); } );
 					return;
 				}
+
 				moduleController.self(()=>{app.view.load(obj);})
 				return;
 			}
