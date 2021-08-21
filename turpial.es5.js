@@ -336,6 +336,7 @@ var Turpial = /*#__PURE__*/ (function () {
     this.ext = ".turpial.js";
     this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
     this.loadModulesOnRoute = this.un(tpObj.loadModulesOnRoute, true);
+    console.log(this.loadModulesOnRoute);
     this.autoloader = this.un(tpObj.autoloader, false);
     this.autoloader_folder = this.un(tpObj.autoloader_folder, "");
     this.cache = this.un(tpObj.cache, "public");
@@ -936,9 +937,8 @@ var Turpial = /*#__PURE__*/ (function () {
         }
 
         window.history.pushState(app.un(obj.object), "", app.un(output));
-        app.controller.routes.set();
 
-        if (obj.loadModule === true || app.loadModulesOnRoute === false) {
+        if (obj.loadModule === true && app.loadModulesOnRoute === true) {
           app.urls.load(obj);
         }
 

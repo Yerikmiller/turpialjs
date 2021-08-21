@@ -41,9 +41,10 @@ class Turpial
 			}else{return selector;}
 		}
 		// helpers
-		this.ext = ".turpial.js";
+		this.ext = ".turpial.js";		
 		this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
 		this.loadModulesOnRoute = this.un(tpObj.loadModulesOnRoute, true);
+		console.log(this.loadModulesOnRoute)
 		this.autoloader = this.un( tpObj.autoloader, false );
 		this.autoloader_folder = this.un( tpObj.autoloader_folder, "" );
 		this.cache = this.un( tpObj.cache, "public" );
@@ -390,7 +391,6 @@ class Turpial
 			getHost: (props)=>{
 				const app = this;
 				props = props||{};
-
 				if(props.loadModule === false || app.loadModulesOnRoute === false){
 					props.relativeModules = true;
 				}
@@ -468,9 +468,8 @@ class Turpial
 				
 				window.history.pushState( app.un( obj.object ),
 										  "",
-										  app.un( output ) );				
-				app.controller.routes.set();
-				if(obj.loadModule === true || app.loadModulesOnRoute === false){
+										  app.un( output ) );	
+				if(obj.loadModule === true && app.loadModulesOnRoute === true){
 					app.urls.load(obj);
 				}
 				let title = app.un( obj.title, false );
