@@ -44,7 +44,6 @@ class Turpial
 		this.ext = ".turpial.js";		
 		this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
 		this.loadModulesOnRoute = this.un(tpObj.loadModulesOnRoute, true);
-		console.log(this.loadModulesOnRoute)
 		this.autoloader = this.un( tpObj.autoloader, false );
 		this.autoloader_folder = this.un( tpObj.autoloader_folder, "" );
 		this.cache = this.un( tpObj.cache, "public" );
