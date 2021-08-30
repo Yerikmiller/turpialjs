@@ -262,1280 +262,829 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-/*
-  _______ _    _ _____  _____ _____          _             _  _____ 
- |__   __| |  | |  __ \|  __ \_   _|   /\   | |           | |/ ____|
-    | |  | |  | | |__) | |__) || |    /  \  | |           | | (___  
-    | |  | |  | |  _  /|  ___/ | |   / /\ \ | |       _   | |\___ \ 
-    | |  | |__| | | \ \| |    _| |_ / ____ \| |____  | |__| |____) |
-    |_|   \____/|_|  \_\_|   |_____/_/    \_\______|  \____/|_____/ 
-    * Turpial JS Library V. 1.0.0
-    * License: MIT.
-    * Copyright Yorman Maricuto, May 2019.
-    * @twitter: @MaricutoYorman, @Instagram: maricuto
-    * Micro-Library to create web components, multi-fetch elements, append styles, scripts, templating engine JSX
-*/
 var Turpial = /*#__PURE__*/ (function () {
   "use strict";
 
   function Turpial() {
     var _this = this;
 
-    var tpObj =
+    var e =
       arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     _classCallCheck(this, Turpial);
 
-    // this is for generate
-    // a family tree of birds
-    // (parents-childrens -> map)
-    // this is is to control realDOM (update-delete-insert-read)
-    this.birds = [];
+    (this.birds = []),
+      (this.un = function (e) {
+        var t =
+          arguments.length > 1 && arguments[1] !== undefined
+            ? arguments[1]
+            : "";
+        return void 0 === e ? t : e;
+      }),
+      (this.searchStr = function (e, t) {
+        var o =
+          arguments.length > 2 && arguments[2] !== undefined
+            ? arguments[2]
+            : !1;
+        var s = e.search(t);
+        return -1 !== s && (!0 !== o || s);
+      }),
+      (this.replacement = function (e, t, o) {
+        return e.split(t).join(o);
+      }),
+      (this.find = function (e) {
+        return "string" == typeof e ? document.getElementById(e) : e;
+      }),
+      (this.ext = ".turpial.js"),
+      (this.allowStateEvents = this.un(e.allowStateEvents, !1)),
+      (this.loadModulesOnRoute = this.un(e.loadModulesOnRoute, !0)),
+      (this.autoloader = this.un(e.autoloader, !1)),
+      (this.autoloader_folder = this.un(e.autoloader_folder, "")),
+      (this.cache = this.un(e.cache, "public")),
+      (this.public_path = this.un(e.public_path, "")),
+      (this.core_path = this.un(e.core_path, "")),
+      (this.folder = this.un(e.core_path, "/turpial/")),
+      (this.loader = {}),
+      (this.httpRequests = []),
+      (this.loader.show = this.un(e.loaderShow, null)),
+      (this.loader.hide = this.un(e.loaderHide, null)),
+      (this.views = {}),
+      (this.statusResources = "loaded"),
+      (this.resources = {}),
+      (this.myComponents = []),
+      (this.random_string = function (e) {
+        void 0 === e && (e = 6);
 
-    this.un = function (v) {
-      var r =
-        arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+        for (
+          var t = "",
+            o =
+              "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+            s = o.length,
+            r = 0;
+          r < e;
+          r++
+        ) {
+          t += o.charAt(Math.floor(Math.random() * s));
+        }
 
-      if (typeof v === "undefined") {
-        return r;
-      } else {
-        return v;
-      }
-    };
-
-    this.searchStr = function (where, what) {
-      var position =
-        arguments.length > 2 && arguments[2] !== undefined
-          ? arguments[2]
-          : false;
-      var search = where.search(what);
-
-      if (search === -1) {
-        return false;
-      }
-
-      if (position === true) {
-        return search;
-      }
-
-      return true;
-    };
-
-    this.replacement = function (target, search, replacement) {
-      return target.split(search).join(replacement);
-    };
-
-    this.find = function (selector) {
-      if (typeof selector === "string") {
-        return document.getElementById(selector);
-      } else {
-        return selector;
-      }
-    }; // helpers
-
-    this.ext = ".turpial.js";
-    this.allowStateEvents = this.un(tpObj.allowStateEvents, false);
-    this.loadModulesOnRoute = this.un(tpObj.loadModulesOnRoute, true);
-    this.autoloader = this.un(tpObj.autoloader, false);
-    this.autoloader_folder = this.un(tpObj.autoloader_folder, "");
-    this.cache = this.un(tpObj.cache, "public");
-    this.public_path = this.un(tpObj.public_path, "");
-    this.core_path = this.un(tpObj.core_path, "");
-    this.folder = this.un(tpObj.core_path, "/turpial/");
-    this.loader = {};
-    this.httpRequests = [];
-    this.loader.show = this.un(tpObj.loaderShow, null);
-    this.loader.hide = this.un(tpObj.loaderHide, null);
-    this.views = {};
-    this.statusResources = "loaded";
-    this.resources = {};
-    this.myComponents = [];
-
-    this.random_string = function (length) {
-      "undefined" == typeof length && (length = 6);
-
-      for (
-        var result = "",
-          characters =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-          charactersLength = characters.length,
-          i = 0;
-        i < length;
-        i++
-      ) {
-        result += characters.charAt(
-          Math.floor(Math.random() * charactersLength)
+        return t;
+      }),
+      (this.selectData = function (e, t, o, s) {
+        s = turpial.un(s, !1);
+        var r = "";
+        return (
+          e.forEach(function (e, i) {
+            if (e[t] == o) return !0 === s ? void (r = i) : void (r = e);
+          }),
+          r
         );
-      }
+      }),
+      (this.component = {
+        applyProps: function applyProps(e, t) {
+          var o = function o() {
+              var o = document.querySelectorAll(e);
+              Array.prototype.slice.call(o).forEach(function (e) {
+                t(e);
+              });
+            },
+            s = function s() {
+              if ("loading" === _this.statusResources)
+                var e = 0,
+                  t = setInterval(function () {
+                    return e > 6e3
+                      ? (console.warn(
+                          "error loading resources and applying components"
+                        ),
+                        void clearInterval(t))
+                      : ((e += 20),
+                        "loaded" === _this.statusResources
+                          ? (clearInterval(t), void o())
+                          : void 0);
+                  }, 20);
+              else o();
+            };
 
-      return result;
-    };
-
-    this.selectData = function (arr, item, value, return_key) {
-      return_key = turpial.un(return_key, false);
-      var get = "";
-      arr.forEach(function (dta, key) {
-        if (dta[item] == value) {
-          if (return_key === true) {
-            get = key;
-            return;
-          } else {
-            get = dta;
-            return;
-          }
-        }
-      });
-      return get;
-    };
-
-    this.component = {
-      applyProps: function applyProps(tag, props) {
-        var applying = function applying() {
-          var elements = document.querySelectorAll(tag); // like a spread operator
-
-          Array.prototype.slice.call(elements).forEach(function (el) {
-            props(el);
+          window.addEventListener("load", function () {
+            s();
+          }),
+            "complete" !== document.readyState || s();
+        },
+        set: function set(e) {
+          var t = _this,
+            o = t.component;
+          var s = e.props,
+            r = e.tag;
+          t.myComponents.push({
+            tag: r,
+            props: s
           });
-        };
+          var i = t.un(e.extends, null);
+          if (
+            (null !== i &&
+              (i = {
+                extends: i
+              }),
+            void 0 === window.customElements)
+          )
+            return (
+              (t.component.olderVerBrow = function () {}),
+              void o.applyProps(r, s)
+            );
+          void 0 === window.customElements.get(r) &&
+            window.customElements.define(
+              r,
+              /*#__PURE__*/ (function (_HTMLElement) {
+                _inherits(_class, _HTMLElement);
 
-        var implement = function implement() {
-          if (_this.statusResources === "loading") {
-            var limit = 0;
-            var interval = setInterval(function () {
-              if (limit > 6000) {
-                console.warn("error loading resources and applying components");
-                clearInterval(interval);
-                return;
-              }
+                var _super = _createSuper(_class);
 
-              limit = limit + 20;
+                function _class() {
+                  var t =
+                    arguments.length > 0 && arguments[0] !== undefined
+                      ? arguments[0]
+                      : e.props;
 
-              if (_this.statusResources === "loaded") {
-                clearInterval(interval);
-                applying(tag, props);
-                return;
-              }
-            }, 20);
-          } else {
-            applying(tag, props);
-            return;
-          }
-        };
+                  _classCallCheck(this, _class);
 
-        window.addEventListener("load", function () {
-          implement();
-          return;
-        });
+                  return _super.call(
+                    this,
+                    (function (e) {
+                      o.applyProps(r, e);
+                    })(t)
+                  );
+                }
 
-        if (document.readyState === "complete") {
-          implement();
-          return;
+                return _class;
+              })(/*#__PURE__*/ _wrapNativeSuper(HTMLElement)),
+              i
+            );
         }
-      },
-      set: function set(obj) {
-        var app = _this;
-        var component = app.component;
-        var props = obj.props;
-        var tag = obj.tag;
-        app.myComponents.push({
-          tag: tag,
-          props: props
-        });
-        var extendTo = app.un(obj.extends, null);
-
-        if (extendTo !== null) {
-          extendTo = {
-            extends: extendTo
-          };
-        }
-
-        if (typeof window.customElements === "undefined") {
-          app.component.olderVerBrow = function () {};
-
-          component.applyProps(tag, props);
-          return;
-        }
-
-        var get = window.customElements.get(tag);
-
-        if (typeof get !== "undefined") {
-          return;
-        }
-
-        window.customElements.define(
-          tag,
-          /*#__PURE__*/ (function (_HTMLElement) {
-            _inherits(_class, _HTMLElement);
-
-            var _super = _createSuper(_class);
-
-            function _class() {
-              var props =
-                arguments.length > 0 && arguments[0] !== undefined
-                  ? arguments[0]
-                  : obj.props;
-
-              _classCallCheck(this, _class);
-
-              return _super.call(
-                this,
-                (function (props) {
-                  // on load window or document loaded...
-                  component.applyProps(tag, props);
-                })(props)
-              );
-            }
-
-            return _class;
-          })(/*#__PURE__*/ _wrapNativeSuper(HTMLElement)),
-          extendTo
-        );
-      }
-    };
-    this.view = {};
-    this.models = {};
-    this.models.sources = {};
-    this.controller = {};
-    this.urls = {};
-    this.filesLoaded = {};
-
-    this.inject = function (files) {
-      var _iterator = _createForOfIteratorHelper(files),
-        _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done; ) {
-          var file = _step.value;
-
-          if (_this.filesLoaded[file].tagName === "STYLE") {
-            _this.filesLoaded[file].innerHTML = _this.filesLoaded[file].text;
-          }
-
-          document.head.appendChild(_this.filesLoaded[file]);
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-    }; // end helpers
-
-    this.models.fetch = function (obj) {
-      var app = _this;
-      var type = obj.type || "script";
-      var cancelOnResend = app.un(obj.cancelOnResend, null);
-      var headers = app.un(obj.options, null);
-      var method = app.un(obj.method, "GET");
-      obj.url = obj.url || [];
-      obj.file = obj.file || obj.url;
-      obj.files = obj.files || obj.file;
-      var files = obj.files;
-
-      if (typeof obj.ready === "undefined") {
-        obj.ready = function () {};
-      }
-
-      if (typeof files === "string") {
-        files = [files];
-      }
-
-      var Head = document.head;
-      var loaded = [];
-      var unloaded = [];
-      var text = [];
-
-      obj.getString = function (r) {
-        return r.clone().text();
-      };
-
-      obj.fetching = function (file) {
-        // remove if the element exist
-        // to not create scripts elements with the same things...
-        // just ignoring or stopping the re-injecting will fail...
-        if (typeof app.filesLoaded[file] !== "undefined" && type === "script") {
-          app.filesLoaded[file].remove();
-        }
-
-        var request = new XMLHttpRequest();
-        request.open(method, file, true);
-        var options = [];
-        var headersValues = [];
-
-        if (headers !== null) {
-          for (var header in headers) {
-            headersValues.push(headers[header]);
-          }
-
-          Object.keys(headers).forEach(function (name, k) {
-            options.push([name, headersValues[k]]);
-          });
-          options.forEach(function (option) {
-            request.setRequestHeader(option[0], option[1]);
-          });
-        }
-
-        request.onload = function () {
-          if (request.status >= 200 && request.status < 400) {
-            var resource = request.responseText;
-            text.push(resource);
-            var elementTag;
-
-            if (type === "script" || type === "style" || type === "link") {
-              elementTag = type;
-            } else {
-              // if tag name is another than both above.
-              elementTag = "script";
-            }
-
-            var el = document.createElement(elementTag);
-
-            if (type === "style") {
-              el.type = "text/css";
-            } else if (type === "link") {
-              el.rel = "stylesheet";
-              el.media = "all";
-              el.href = file;
-            }
-
-            el.text = resource;
-            app.filesLoaded[file] = el;
-            loaded.push(file);
-          } else {
-            if (typeof obj.onerror === "function" && request.status >= 400) {
-              return obj.onerror(request.status);
-            }
-          }
-        };
-
-        request.onerror = function () {
-          app.filesLoaded[file] = "";
-          loaded.push("unloaded:" + file);
-          unloaded.push(file);
-        };
-
-        if (cancelOnResend === true) {
-          var idRequest = "rq_" + app.un(obj.id, app.random_string(4));
-          var rq = app.httpRequests[idRequest];
-
-          if (typeof rq !== "undefined") {
-            try {
-              app.httpRequests[idRequest].abort();
-            } catch (e) {
-              console.warn("unable to cancel request.");
-            }
-          }
-
-          app.httpRequests[idRequest] = request;
-        }
-
-        if (method === "POST") {
-          request.send(obj.data);
-          return;
-        }
-
-        request.send();
-      };
-
-      app.statusResources = "loading";
-
-      (function (files) {
-        var _iterator2 = _createForOfIteratorHelper(files),
-          _step2;
+      }),
+      (this.view = {}),
+      (this.models = {}),
+      (this.models.sources = {}),
+      (this.controller = {}),
+      (this.urls = {}),
+      (this.filesLoaded = {}),
+      (this.inject = function (e) {
+        var _iterator = _createForOfIteratorHelper(e),
+          _step;
 
         try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done; ) {
-            var file = _step2.value;
-            obj.fetching(file);
+          for (_iterator.s(); !(_step = _iterator.n()).done; ) {
+            var t = _step.value;
+            "STYLE" === _this.filesLoaded[t].tagName &&
+              (_this.filesLoaded[t].innerHTML = _this.filesLoaded[t].text),
+              document.head.appendChild(_this.filesLoaded[t]);
           }
         } catch (err) {
-          _iterator2.e(err);
+          _iterator.e(err);
         } finally {
-          _iterator2.f();
+          _iterator.f();
         }
+      }),
+      (this.models.fetch = function (e) {
+        var t = _this,
+          o = e.type || "script";
+        var s = t.un(e.cancelOnResend, null),
+          r = t.un(e.options, null),
+          i = t.un(e.method, "GET");
+        (e.url = e.url || []),
+          (e.file = e.file || e.url),
+          (e.files = e.files || e.file);
+        var n = e.files;
+        void 0 === e.ready && (e.ready = function () {}),
+          "string" == typeof n && (n = [n]);
+        document.head;
+        var l = [],
+          a = [];
+        var u = [];
+        (e.getString = function (e) {
+          return e.clone().text();
+        }),
+          (e.fetching = function (n) {
+            void 0 !== t.filesLoaded[n] &&
+              "script" === o &&
+              t.filesLoaded[n].remove();
+            var h = new XMLHttpRequest();
+            h.open(i, n, !0);
+            var c = [],
+              d = [];
 
-        var counter = 0;
-        var check = setInterval(function () {
-          counter = counter + 70;
-          var forceLoad = false;
-
-          if (counter === 10000) {
-            forceLoad = true;
-            console.warn("¡Impossible to load all files.");
-          }
-
-          if (loaded.length === files.length || forceLoad === true) {
-            clearInterval(check);
-
-            if (type === "script" || type === "style" || type === "link") {
-              app.inject(files);
-              obj.ready();
-            } else if (type === "text") {
-              var texts = [];
-
-              var _iterator3 = _createForOfIteratorHelper(files),
-                _step3;
-
-              try {
-                for (_iterator3.s(); !(_step3 = _iterator3.n()).done; ) {
-                  var file = _step3.value;
-                  texts.push(app.filesLoaded[file].innerHTML);
-                }
-              } catch (err) {
-                _iterator3.e(err);
-              } finally {
-                _iterator3.f();
+            if (null !== r) {
+              for (var p in r) {
+                d.push(r[p]);
               }
 
-              obj.ready(texts);
+              Object.keys(r).forEach(function (e, t) {
+                c.push([e, d[t]]);
+              }),
+                c.forEach(function (e) {
+                  h.setRequestHeader(e[0], e[1]);
+                });
             }
 
-            app.statusResources = "loaded";
-            return;
-          }
-        }, 70);
-      })(files);
-    };
-
-    this.fetch = function (props) {
-      return _this.models.fetch(props);
-    };
-
-    this.include = function (props) {
-      return _this.models.fetch(props);
-    };
-
-    this.linkCSS = function (props) {
-      props.type = "link";
-      var app = _this;
-      props.type = "style";
-      props.url = props.url || [];
-      props.file = props.file || props.url;
-      props.files = props.files || props.file;
-      var nodes = [];
-      props.files.map(function (file) {
-        var link = document.createElement("link");
-        link.setAttribute("media", "all");
-        link.setAttribute("rel", "stylesheet");
-        link.href = file;
-        var el = app.mount(document.head, link);
-        nodes.push(el);
-      });
-      props.ready(nodes);
-      return nodes; // return this.models.fetch(props)
-    };
-
-    this.includeCSS = function (props) {
-      props.type = "style";
-      return _this.models.fetch(props);
-    };
-
-    this.controller.views = {
-      path: function path(obj) {
-        var ext = _this.ext;
-        var folder = "".concat(_this.folder, "views/");
-        var file_name = obj.views;
-        var resources = _this.resources; // in case of route.
-
-        var routing = file_name.split("/");
-        var Path = folder;
-
-        if (routing.length === 1) {
-          var file = routing[0];
-          Path += "".concat(file).concat(ext);
-          resources[file] = {}; // create view instance.
-
-          return Path;
-        } else {
-          // file
-          var last = routing.pop(); // last folder
-
-          var penultimate = routing.pop();
-          var LastFolder = penultimate;
-          var file = last;
-          resources[LastFolder] = {}; // create view instance.
-
-          resources[LastFolder][file] = {}; // create view instance.
-        }
-
-        if (routing.length === 0) {
-          Path += "".concat(LastFolder, "/").concat(file).concat(ext);
-        } else {
-          routing.forEach(function (subfolder) {
-            Path += "".concat(subfolder, "/");
-          });
-          Path += "".concat(LastFolder, "/").concat(file).concat(ext);
-        }
-
-        return Path;
-      }
-    };
-
-    this.view.load = function (props) {
-      props = props || {};
-
-      props.ready = props.ready || function () {};
-
-      props.folder = _this.autoloader_folder || "";
-      var ext = _this.ext;
-      var parameters = _this.app.parameters;
-      var controller = _this.app.controller_name;
-      var action = _this.app.action_name;
-      var base = ""
-        .concat(_this.folder)
-        .concat(props.folder)
-        .concat(controller);
-      props.module = turpial.un(props.module, null);
-
-      if (controller === "index") {
-        var urlPath = "".concat(base).concat(ext);
-      } else if (
-        parameters.length === 0 &&
-        controller !== "index" &&
-        typeof action === "undefined"
-      ) {
-        var urlPath = "".concat(base, "/index").concat(ext);
-      } else if (parameters.length === 0 && action !== "undefined") {
-        var urlPath = "".concat(base, "/").concat(action, "/index").concat(ext);
-      } else {
-        var urlPath = "".concat(base, "/").concat(action);
-        parameters.forEach(function (parameter) {
-          urlPath += "/".concat(parameter);
-        });
-        urlPath += ext;
-      }
-
-      if (typeof props.module === "string") {
-        props.ext = props.ext || ext;
-        urlPath = _this.core_path + props.module + props.ext;
-      }
-
-      var data = {
-        file: urlPath,
-        options: props.options || {},
-        ready: function ready() {
-          props.ready();
-        }
-      };
-
-      if (typeof props.error === "function") {
-        data["error"] = function (data) {
-          props.error(data);
-        };
-      }
-
-      _this.DataView = data;
-
-      if (props.module === "") {
-        return;
-      }
-
-      if (props.module === false) {
-        return;
-      }
-
-      _this.fetch(data);
-    };
-
-    this.controller.routes = {
-      getHost: function getHost(props) {
-        var app = _this;
-        props = props || {};
-
-        if (props.loadModule === false || app.loadModulesOnRoute === false) {
-          props.relativeModules = true;
-        }
-
-        var href = window.location.href;
-        href = href.split("#");
-        href = href[0];
-        href = href.split("?");
-        href = href[0];
-        /*if( app.searchStr(obj.path, "http") === true ){
-          href = "";
-        }*/
-
-        var relativeModules = app.un(props.relativeModules, false); // search for dynamic host.
-
-        var position = href.search(app.public_path);
-        var Host = href.slice(position, position + app.public_path.length);
-        Host = href.split(Host)[0] + Host;
-        var slash = Host.slice(-1);
-
-        if (slash !== "/") {
-          slash = "/";
-        } else {
-          slash = "";
-        }
-
-        if (relativeModules == true) {
-          return "".concat(Host).concat(slash);
-        } else {
-          slash = href.slice(-1);
-
-          if (slash !== "/") {
-            slash = "/";
-          } else {
-            slash = "";
-          }
-
-          return "".concat(href).concat(slash);
-        } // old output: `${href}${d}${obj.path}`
-      },
-      set: function set() {
-        var app = _this;
-        app.app = {};
-        var Path = window.location.href.split("?");
-        Path = Path[0];
-        Path = Path.split("#");
-        var SearchPublichPath = Path[0].search(app.public_path);
-
-        if (SearchPublichPath > 0) {
-          Path = Path[0].substr(SearchPublichPath + app.public_path.length);
-        } else {
-          console.warn("bad_public_path_name");
-          return;
-        }
-
-        var routes = Path.split("/");
-        var n = 0;
-        var param = 0;
-        app.app.parameters = [];
-        routes.forEach(function (route) {
-          if (route == "") {
-            return;
-          }
-
-          if (n === 0) {
-            app.app.controller_name = route;
-          }
-
-          if (n === 1) {
-            app.app.action_name = route;
-          } else if (n > 1) {
-            app.app.parameters[param++] = route;
-          }
-
-          n++;
-        });
-
-        if (typeof app.app.controller_name === "undefined") {
-          app.app.controller_name = "index";
-        }
-
-        app.host = app.controller.routes.getHost();
-      },
-      change: function change(obj) {
-        var app = _this;
-        obj.loadModule = app.un(obj.loadModule, true);
-        var output = ""
-          .concat(app.controller.routes.getHost(obj))
-          .concat(obj.path);
-
-        if (output === window.location.href) {
-          return;
-        }
-
-        window.history.pushState(app.un(obj.object), "", app.un(output));
-
-        if (obj.loadModule === true && app.loadModulesOnRoute === true) {
-          app.urls.load(obj);
-        }
-
-        var title = app.un(obj.title, false);
-
-        if (typeof title === "string") {
-          document.title = title;
-        }
-      },
-      go: function go(value) {
-        if (typeof value === "number") {
-          window.history.go(value);
-        } else if (value === "back") {
-          window.history.back();
-        } else if (value === "forward") {
-          window.history.forward();
-        } else {
-          return;
-        }
-
-        _this.controller.routes.set();
-
-        _this.urls.load();
-      }
-    };
-
-    this.router = function (obj, ready) {
-      ready = ready || function () {};
-
-      if (typeof obj === "number" || typeof obj === "string") {
-        _this.controller.routes.go(obj);
-
-        return;
-      }
-
-      _this.controller.routes.change(obj);
-
-      _this.stateEvent();
-
-      ready();
-    };
-
-    this.routes = this.controller.routes.set;
-    this.routes(); // execute routes
-
-    this.controller.components = {};
-
-    this.views.get = function (obj) {
-      if (_typeof(obj) !== "object") {
-        return;
-      }
-
-      if (typeof obj.views === "string") {
-        obj.views = [obj.views];
-      }
-
-      var Paths = [];
-      var controller = _this.controller.views;
-      obj.views.forEach(function (view, key) {
-        obj.views = view;
-        Paths[key] = controller.path(obj);
-      });
-      Object.assign(obj, {
-        file: Paths,
-        ready: obj.ready
-      });
-
-      _this.fetch(obj);
-    };
-
-    this.urls = {};
-
-    this.urls.load = function (obj) {
-      obj = obj || {};
-      var app = _this;
-      var controller = app.app.controller_name;
-      var action = app.app.action_name;
-      var parameters = app.app.parameters; // if this is undefined set as empty...
-
-      var moduleController = app.urls[controller] || false;
-      obj.module = turpial.un(obj.module, null); // when @turpial.router method is used and
-      // load a custom JS module/component file.
-
-      if (typeof obj.module === "string") {
-        app.view.load(obj);
-        return;
-      } // when url is root or there isn't modules
-
-      if (moduleController === false) {
-        app.view.load(obj);
-        return;
-      }
-
-      var loadController = app.un(moduleController.loadController, true);
-      var loadAction = app.un(moduleController.loadAction, true);
-      var loadParameters = app.un(moduleController.loadParameters, 1000);
-      var moduleAction = app.un(app.urls[controller][action], false);
-
-      if (typeof moduleController.self === "function") {
-        if (typeof moduleAction === "function" && loadAction === true) {
-          if (parameters.length > loadParameters) {
-            moduleController.self(function () {
-              moduleAction(function () {});
-            });
-            return;
-          }
-
-          moduleController.self(function () {
-            moduleAction(function () {
-              app.view.load(obj);
-            });
-          });
-          return;
-        } else if (loadAction === false && typeof action === "string") {
-          moduleController.self(function () {
-            moduleAction(function () {});
-          });
-          return;
-        }
-
-        moduleController.self(function () {
-          app.view.load(obj);
-        });
-        return;
-      }
-    };
-
-    this.historyEvents = {};
-
-    this.URLNoHASH = function (url) {
-      return url.split("#")[0];
-    };
-
-    this.createHistoryEvent = function (position, callback) {
-      var main = this.URLNoHASH(window.location.href);
-      position = position || "";
-      position = main + position;
-      this.historyEvents[position] = callback;
-      /* @HOW TO USE HISTORY VIEWS.
-       * you need to create new history events for actual position history
-       * you can rename index position to trigger a function when back history
-       * action was executed.
-       *
-       * ex: you can create history events like:
-       * @index-> localhost/myweb
-       * when you create an application that generate a different view
-       * and generating new html elements and change history wirh router.
-       * you can add it to history event views to generate
-       * a callback function when history has that location path.
-       *
-       * You need to set @allowStateEvents to true to trigger this turpial function.
-       *
-       * note: turpial will trigger index or main view in the position you have
-       * for example if the page load at: myweb.com/portfolio/
-       * that point will be considered like a main position view.
-       * @you can rename index if you left empty url position
-       *  value on createHistoryEvent method.
-       * @you can create another view like myweb.com/portfolio/client-1 naming
-       *  position url like "/client-1"
-       *  note the "/" sign at the beginning
-       * @set the function to be executed on callback in second value property.
-       */
-    };
-
-    this.createHistoryEvent("", function () {});
-
-    this.stateEvent = function () {
-      var event = _this.historyEvents;
-
-      if (typeof event[_this.URLNoHASH(window.location.href)] === "function") {
-        event[_this.URLNoHASH(window.location.href)]();
-      }
-    };
-
-    if (this.allowStateEvents === true) {
-      window.addEventListener("popstate", this.stateEvent);
-    }
-
-    if (tpObj.autoloader === true) {
-      window.addEventListener("load", function () {
-        _this.urls.load();
-      });
-
-      window.onpopstate = function (event) {
-        // on window history change
-        // update routes and reload modules.
-        _this.controller.routes.set(); // execute routes
-
-        _this.urls.load();
-
-        (function () {
-          // just for older browsers
-          if (typeof window.customElements === "undefined") {
-            Array.prototype.slice
-              .call(this.myComponents)
-              .forEach(function (com) {
-                this.component.set({
-                  tag: com.tag,
-                  props: com.props
-                });
-              });
-          }
-        })();
-      };
-    }
-
-    this.template = function (html, replacemets) {
-      var engine = {
-        run: function run(html, replacemets) {
-          replacemets = replacemets || [];
-
-          if (
-            _typeof(replacemets) === "object" &&
-            !Array.isArray(replacemets)
-          ) {
-            var reArrange = [];
-            Object.values(replacemets).map(function (element, number) {
-              reArrange.push(
-                _defineProperty({}, Object.keys(replacemets)[number], element)
-              );
-            });
-            replacemets = reArrange;
-          }
-
-          if (_typeof(html) === "object") {
-            html = html.innerHTML;
-          }
-
-          var template = function template(_template, searchall, replaceby) {
-            return _template.split(searchall).join(replaceby);
-          };
-
-          var structure = html;
-          replacemets.forEach(function (replacement) {
-            var items = Object.keys(replacement);
-            var values = Object.values(replacement);
-            items.forEach(function (item, key) {
-              item = "{{ ".concat(item, " }}");
-
-              if (html.search(item) >= 0) {
-                structure = template(structure, item, values[key]);
+            if (
+              ((h.onload = function () {
+                if (h.status >= 200 && h.status < 400) {
+                  var s,
+                    r = h.responseText;
+                  u.push(r),
+                    (s =
+                      "script" === o || "style" === o || "link" === o
+                        ? o
+                        : "script");
+                  var i = document.createElement(s);
+                  "style" === o
+                    ? (i.type = "text/css")
+                    : "link" === o &&
+                      ((i.rel = "stylesheet"), (i.media = "all"), (i.href = n)),
+                    (i.text = r),
+                    (t.filesLoaded[n] = i),
+                    l.push(n);
+                } else if ("function" == typeof e.onerror && h.status >= 400)
+                  return e.onerror(h.status);
+              }),
+              (h.onerror = function () {
+                (t.filesLoaded[n] = ""), l.push("unloaded:" + n), a.push(n);
+              }),
+              !0 === s)
+            ) {
+              var _o = "rq_" + t.un(e.id, t.random_string(4));
+
+              if (void 0 !== t.httpRequests[_o])
+                try {
+                  t.httpRequests[_o].abort();
+                } catch (e) {
+                  console.warn("unable to cancel request.");
+                }
+              t.httpRequests[_o] = h;
+            }
+
+            "POST" !== i ? h.send() : h.send(e.data);
+          }),
+          (t.statusResources = "loading"),
+          (function (s) {
+            var _iterator2 = _createForOfIteratorHelper(s),
+              _step2;
+
+            try {
+              for (_iterator2.s(); !(_step2 = _iterator2.n()).done; ) {
+                var _t = _step2.value;
+                e.fetching(_t);
               }
-            });
-          });
-          return structure;
-        },
-        replace: function replace(item, replacement, HTML) {
-          item = "{{ ".concat(item, " }}");
-          HTML = HTML.split(item).join(replacement);
-          return HTML;
-        },
-        joinMoreElements: function joinMoreElements(target, elements) {
-          Object.values(elements).forEach(function (element, key) {
-            target[Object.keys(elements)[key]] = element;
-          });
-          return target;
-        },
-        toHTML: function toHTML(target, strings) {
-          if (target !== false) {
-            target.innerHTML = strings;
-            target = target.content.firstElementChild;
-            return target;
-          } else {
-            turpial.render();
+            } catch (err) {
+              _iterator2.e(err);
+            } finally {
+              _iterator2.f();
+            }
+
+            var r = 0;
+            var i = setInterval(function () {
+              var n = !1;
+              if (
+                (1e4 === (r += 70) &&
+                  ((n = !0), console.warn("¡Impossible to load all files.")),
+                l.length !== s.length && !0 !== n)
+              );
+              else {
+                if (
+                  (clearInterval(i),
+                  "script" === o || "style" === o || "link" === o)
+                )
+                  t.inject(s), e.ready();
+                else if ("text" === o) {
+                  var a = [];
+
+                  var _iterator3 = _createForOfIteratorHelper(s),
+                    _step3;
+
+                  try {
+                    for (_iterator3.s(); !(_step3 = _iterator3.n()).done; ) {
+                      var u = _step3.value;
+                      a.push(t.filesLoaded[u].innerHTML);
+                    }
+                  } catch (err) {
+                    _iterator3.e(err);
+                  } finally {
+                    _iterator3.f();
+                  }
+
+                  e.ready(a);
+                }
+                t.statusResources = "loaded";
+              }
+            }, 70);
+          })(n);
+      }),
+      (this.fetch = function (e) {
+        return _this.models.fetch(e);
+      }),
+      (this.include = function (e) {
+        return _this.models.fetch(e);
+      }),
+      (this.linkCSS = function (e) {
+        e.type = "link";
+        var t = _this;
+        (e.type = "style"),
+          (e.url = e.url || []),
+          (e.file = e.file || e.url),
+          (e.files = e.files || e.file);
+        var o = [];
+        return (
+          e.files.map(function (e) {
+            var s = document.createElement("link");
+            s.setAttribute("media", "all"),
+              s.setAttribute("rel", "stylesheet"),
+              (s.href = e);
+            var r = t.mount(document.head, s);
+            o.push(r);
+          }),
+          e.ready(o),
+          o
+        );
+      }),
+      (this.includeCSS = function (e) {
+        return (e.type = "style"), _this.models.fetch(e);
+      }),
+      (this.controller.views = {
+        path: function path(e) {
+          var t = _this.ext;
+          var o = "".concat(_this.folder, "views/"),
+            s = e.views,
+            r = _this.resources,
+            i = s.split("/"),
+            n = o;
+
+          if (1 === i.length) {
+            var l = i[0];
+            return (n += "".concat(l).concat(t)), (r[l] = {}), n;
           }
-        },
-        toString: function toString(target, html) {
-          html = html.cloneNode(true);
-          var dom_elem = target;
-          dom_elem.innerHTML = "<div></div>";
-          dom_elem = dom_elem.content.firstElementChild;
-          dom_elem.appendChild(html);
-          return dom_elem.innerHTML;
-        },
-        create: function create(element, replacements) {
-          var app = this; // start with "div" after template tag.
 
-          var content = turpial.find(element).content.firstElementChild; // this is to fill it, after finish the process.
-
-          var container = content.cloneNode(true);
-          var getHTMLText = content.innerHTML;
-          var eraseEls = [];
-          Object.keys(replacements).forEach(function (item, key) {
-            getHTMLText = app.replace(
-              item,
-              Object.values(replacements)[key],
-              getHTMLText
-            );
-          }); // PUSH INTO THE CLONDED
-
-          container.innerHTML = getHTMLText;
-          return container;
+          var a = i.pop(),
+            u = i.pop();
+          l = a;
+          return (
+            (r[u] = {}),
+            (r[u][l] = {}),
+            0 === i.length
+              ? (n += "".concat(u, "/").concat(l).concat(t))
+              : (i.forEach(function (e) {
+                  n += "".concat(e, "/");
+                }),
+                (n += "".concat(u, "/").concat(l).concat(t))),
+            n
+          );
         }
-      };
-      return engine.run(html, replacemets);
-    };
+      }),
+      (this.view.load = function (e) {
+        ((e = e || {}).ready = e.ready || function () {}),
+          (e.folder = _this.autoloader_folder || "");
+        var t = _this.ext,
+          o = _this.app.parameters,
+          s = _this.app.controller_name,
+          r = _this.app.action_name,
+          i = "".concat(_this.folder).concat(e.folder).concat(s);
+        if (((e.module = turpial.un(e.module, null)), "index" === s))
+          var n = "".concat(i).concat(t);
+        else if (0 === o.length && "index" !== s && void 0 === r)
+          n = "".concat(i, "/index").concat(t);
+        else if (0 === o.length && "undefined" !== r)
+          n = "".concat(i, "/").concat(r, "/index").concat(t);
+        else {
+          n = "".concat(i, "/").concat(r);
+          o.forEach(function (e) {
+            n += "/".concat(e);
+          }),
+            (n += t);
+        }
+        "string" == typeof e.module &&
+          ((e.ext = e.ext || t), (n = _this.core_path + e.module + e.ext));
+        var l = {
+          file: n,
+          options: e.options || {},
+          ready: function ready() {
+            e.ready();
+          }
+        };
+        "function" == typeof e.error &&
+          (l.error = function (t) {
+            e.error(t);
+          }),
+          (_this.DataView = l),
+          "" !== e.module && !1 !== e.module && _this.fetch(l);
+      }),
+      (this.controller.routes = {
+        getHost: function getHost(e) {
+          (!1 !== (e = e || {}).loadModule &&
+            !1 !== _this.loadModulesOnRoute) ||
+            (e.relativeModules = !0);
+          var t = window.location.href;
+          t = (t = (t = (t = t.split("#"))[0]).split("?"))[0];
+
+          var o = _this.un(e.relativeModules, !1),
+            s = t.search(_this.public_path),
+            r = t.slice(s, s + _this.public_path.length);
+
+          var i = (r = t.split(r)[0] + r).slice(-1);
+          return (
+            (i = "/" !== i ? "/" : ""),
+            1 == o
+              ? "".concat(r).concat(i)
+              : ((i = t.slice(-1)),
+                "".concat(t).concat((i = "/" !== i ? "/" : "")))
+          );
+        },
+        set: function set(e) {
+          var t = _this;
+          (t.app = {}), (e = e || {});
+          var o = window.location.href.split("?");
+          var s = (o = (o = o[0]).split("#"))[0].search(t.public_path);
+          if (!(s > 0)) return void console.warn("bad_public_path_name");
+          var r = (o = o[0].substr(s + t.public_path.length)).split("/"),
+            i = 0,
+            n = 0;
+          (t.app.parameters = []),
+            r.forEach(function (e) {
+              "" != e &&
+                (0 === i && (t.app.controller_name = e),
+                1 === i
+                  ? (t.app.action_name = e)
+                  : i > 1 && (t.app.parameters[n++] = e),
+                i++);
+            }),
+            (t.app.controller_name = t.app.controller_name || "index"),
+            (t.app.action_name = t.app.action_name || "");
+          var l = ""
+            .concat(t.app.controller_name, "/")
+            .concat(t.app.action_name, "/")
+            .concat(t.app.parameters.join("/"));
+          (l = (l = l.split("//").join("/")).split("///").join("/")),
+            (t.app.props = e),
+            (t.app.path = l),
+            (t.host = t.controller.routes.getHost()),
+            (t.app.host = t.host);
+        },
+        change: function change(e) {
+          var t = _this,
+            o = e.type || "pushState";
+          e.loadModule = t.un(e.loadModule, !0);
+          var s = "".concat(t.controller.routes.getHost(e)).concat(e.path);
+          if (s === window.location.href) return;
+          window.history[o](t.un(e.object), "", t.un(s)),
+            !0 === e.loadModule &&
+              !0 === t.loadModulesOnRoute &&
+              t.urls.load(e);
+          var r = t.un(e.title, !1);
+          "string" == typeof r && (document.title = r);
+        },
+        go: function go(e) {
+          if ("number" == typeof e) window.history.go(e);
+          else if ("back" === e) window.history.back();
+          else {
+            if ("forward" !== e) return;
+            window.history.forward();
+          }
+          _this.controller.routes.set(), _this.urls.load();
+        }
+      }),
+      (this.router = function (e, t) {
+        (t = t || function () {}),
+          "number" != typeof e && "string" != typeof e
+            ? (_this.controller.routes.change(e), _this.stateEvent(), t())
+            : _this.controller.routes.go(e);
+      }),
+      (this.routes = this.controller.routes.set),
+      this.routes(),
+      (this.controller.components = {}),
+      (this.views.get = function (e) {
+        if ("object" == _typeof(e)) {
+          "string" == typeof e.views && (e.views = [e.views]);
+          var t = [],
+            o = _this.controller.views;
+          e.views.forEach(function (s, r) {
+            (e.views = s), (t[r] = o.path(e));
+          }),
+            Object.assign(e, {
+              file: t,
+              ready: e.ready
+            }),
+            _this.fetch(e);
+        }
+      }),
+      (this.urls = {}),
+      (this.urls.load = function (e) {
+        e = e || {};
+        var t = _this,
+          o = t.app.controller_name,
+          s = t.app.action_name,
+          r = t.app.parameters;
+        var i = t.urls[o] || !1;
+        if (
+          ((e.module = turpial.un(e.module, null)), "string" == typeof e.module)
+        )
+          return void t.view.load(e);
+        if (!1 === i) return void t.view.load(e);
+        t.un(i.loadController, !0);
+        var n = t.un(i.loadAction, !0),
+          l = t.un(i.loadParameters, 1e3),
+          a = t.un(t.urls[o][s], !1);
+        return "function" == typeof i.self
+          ? "function" == typeof a && !0 === n
+            ? r.length > l
+              ? void i.self(function () {
+                  a(function () {});
+                })
+              : void i.self(function () {
+                  a(function () {
+                    t.view.load(e);
+                  });
+                })
+            : !1 === n && "string" == typeof s
+            ? void i.self(function () {
+                a(function () {});
+              })
+            : void i.self(function () {
+                t.view.load(e);
+              })
+          : void 0;
+      }),
+      (this.historyEvents = {}),
+      (this.URLNoHASH = function (e) {
+        return e.split("#")[0];
+      }),
+      (this.createHistoryEvent = function (e, t) {
+        (e = this.URLNoHASH(window.location.href) + (e = e || "")),
+          (this.historyEvents[e] = t);
+      }),
+      this.createHistoryEvent("", function () {}),
+      (this.stateEvent = function () {
+        var e = _this.historyEvents;
+        "function" == typeof e[_this.URLNoHASH(window.location.href)] &&
+          e[_this.URLNoHASH(window.location.href)]();
+      }),
+      !0 === this.allowStateEvents &&
+        window.addEventListener("popstate", this.stateEvent),
+      !0 === e.autoloader &&
+        (window.addEventListener("load", function () {
+          _this.urls.load();
+        }),
+        (window.onpopstate = function (e) {
+          _this.controller.routes.set(),
+            _this.urls.load(),
+            (function () {
+              void 0 === window.customElements &&
+                Array.prototype.slice
+                  .call(this.myComponents)
+                  .forEach(function (e) {
+                    this.component.set({
+                      tag: e.tag,
+                      props: e.props
+                    });
+                  });
+            })();
+        })),
+      (this.template = function (e, t) {
+        return (function (e, t) {
+          if ("object" == _typeof((t = t || [])) && !Array.isArray(t)) {
+            var o = [];
+            Object.values(t).map(function (e, s) {
+              o.push(_defineProperty({}, Object.keys(t)[s], e));
+            }),
+              (t = o);
+          }
+
+          "object" == _typeof(e) && (e = e.innerHTML);
+          var s = e;
+          return (
+            t.forEach(function (t) {
+              var o = Object.keys(t),
+                r = Object.values(t);
+              o.forEach(function (t, o) {
+                (t = "{{ ".concat(t, " }}")),
+                  e.search(t) >= 0 &&
+                    (s = (function (e, t, o) {
+                      return e.split(t).join(o);
+                    })(s, t, r[o]));
+              });
+            }),
+            s
+          );
+        })(e, t);
+      });
   }
 
   _createClass(Turpial, [
     {
       key: "map",
-      value: function map(appName) {
-        var nodes =
+      value: function map(e) {
+        var t =
           arguments.length > 1 && arguments[1] !== undefined
             ? arguments[1]
             : [];
-        var app = this;
-        var map = app.birds[appName];
+        var o = this.birds[e];
 
-        if (_typeof(appName) === "object") {
-          map = appName;
-        } else if (typeof map === "undefined") {
-          map = this.find(appName);
+        if (
+          ("object" == _typeof(e)
+            ? (o = e)
+            : void 0 === o && (o = this.find(e)),
+          "object" == _typeof(t))
+        ) {
+          if (void 0 === t[0]) return o;
+          (o = o.children),
+            t.forEach(function (e, s) {
+              o = void 0 === t[s + 1] ? o[e] : o[e].children;
+            });
         }
 
-        if (_typeof(nodes) === "object") {
-          if (typeof nodes[0] === "undefined") {
-            return map;
-          }
-
-          map = map.children;
-          nodes.forEach(function (node, key) {
-            if (typeof nodes[key + 1] === "undefined") {
-              map = map[node];
-            } else {
-              map = map[node].children;
-            }
-          });
-        }
-
-        return map;
+        return o;
       }
     },
     {
       key: "createMap",
-      value: function createMap(app) {
-        app = this.find(app);
-        var turpial_app_id = app.getAttribute("id");
+      value: function createMap(e) {
+        var t = (e = this.find(e)).getAttribute("id");
 
-        if (typeof turpial_app_id !== "undefined") {
-          var realDOMElement = document.getElementById(turpial_app_id);
-          this.birds[turpial_app_id] = realDOMElement;
+        if (void 0 !== t) {
+          var o = document.getElementById(t);
+          this.birds[t] = o;
         }
       }
     },
     {
       key: "read",
-      value: function read(appName) {
-        var nodes =
+      value: function read(e) {
+        var t =
           arguments.length > 1 && arguments[1] !== undefined
             ? arguments[1]
             : [];
-        return this.map(appName, nodes);
+        return this.map(e, t);
       }
     },
     {
       key: "selectorApp",
-      value: function selectorApp(appName) {
-        var selector =
+      value: function selectorApp(e) {
+        var t =
           arguments.length > 1 && arguments[1] !== undefined
             ? arguments[1]
             : [];
-
-        if (_typeof(selector) === "object") {
-          // searching via map.
-          if (Number.isInteger(selector[0]) === true) {
-            return this.map(appName, selector);
-          } else {
-            return selector;
-          }
-        } else {
-          return selector;
-        }
+        return "object" == _typeof(t) && !0 === Number.isInteger(t[0])
+          ? this.map(e, t)
+          : t;
       }
     },
     {
       key: "delete",
-      value: function _delete(selector) {
-        selector = this.find(selector);
-        selector.remove();
+      value: function _delete(e) {
+        (e = this.find(e)).remove();
       }
     },
     {
       key: "update",
-      value: function update(selector) {
-        var insert =
+      value: function update(e) {
+        var t =
           arguments.length > 1 && arguments[1] !== undefined
             ? arguments[1]
             : null;
-        var where =
+        var o =
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : "replace-selector";
-        var justUpdate =
+        var s =
           arguments.length > 3 && arguments[3] !== undefined
             ? arguments[3]
-            : true;
+            : !0;
+        if ("string" == typeof t)
+          var r = this.render(t),
+            i = t;
+        else r = t;
 
-        if (typeof insert === "string") {
-          var content = this.render(insert);
-          var string = insert;
-        } else {
-          var content = insert;
+        if (null === r) {
+          var n = !1;
+          r = t;
+        } else n = !0;
+
+        var l = e;
+        !0 === s && (o = "replace-selector");
+        var a = !1,
+          u = l.parentNode;
+        if ("before" === o) u.insertBefore(r, l), (a = r);
+        else if ("after" === o) u.insertBefore(r, l.nextSibling), (a = r);
+        else if ("replace-selector" === o) u.replaceChild(r, l), (a = r);
+        else {
+          if ("inner" !== o) return console.warn("error-on-placement"), !1;
+          !0 === n ? (l.innerHTML = i) : (l.innerText = r), (a = l);
         }
-
-        if (content === null) {
-          var isHTML = false;
-          var content = insert;
-        } else {
-          var isHTML = true;
-        } // get the child to insert a new element before or after
-
-        var child = selector;
-
-        if (justUpdate === true) {
-          // if the the call is for update
-          where = "replace-selector";
-        } // get his parent
-
-        var output = false;
-        var parent = child.parentNode;
-
-        if (where === "before") {
-          parent.insertBefore(content, child);
-          output = content;
-        } else if (where === "after") {
-          // emulating with next sibling.
-          parent.insertBefore(content, child.nextSibling);
-          output = content;
-        } else if (where === "replace-selector") {
-          // insertar nuevo elemento y eliminar viejo...
-          parent.replaceChild(content, child);
-          output = content;
-        } else if (where === "inner") {
-          if (isHTML === true) {
-            // editar el child
-            child.innerHTML = string;
-          } else {
-            child.innerText = content;
-          }
-
-          output = child;
-        } else {
-          console.warn("error-on-placement");
-          return false;
-        }
-
-        var mapping = child;
-        this.createMap(mapping);
-        return output;
+        var h = l;
+        return this.createMap(h), a;
       }
     },
     {
       key: "insert",
-      value: function insert(selector, content) {
-        var where =
+      value: function insert(e, t) {
+        var o =
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : "inner";
-        selector = this.find(selector);
-        return this.update(selector, content, where, false);
+        return (e = this.find(e)), this.update(e, t, o, !1);
       }
     },
     {
       key: "render",
-      value: function render(LiteralsString) {
-        var dom_elem = document.createElement("template");
-        dom_elem.innerHTML = LiteralsString;
-        dom_elem = dom_elem.content.firstElementChild;
-        return dom_elem;
+      value: function render(e) {
+        var t = document.createElement("template");
+        return (t.innerHTML = e), (t = t.content.firstElementChild);
       }
     },
     {
       key: "mount",
-      value: function mount(place, things) {
-        if (typeof things === "string") {
-          var things = this.render(things);
-        }
-
-        if (things === null) {
-          console.warn("need to be HTML string or object");
-          return;
-        }
-
-        place = this.find(place);
-        var target = place.appendChild(things);
-        var app = place;
-        this.createMap(app);
-        return target;
+      value: function mount(e, t) {
+        if ("string" == typeof t) t = this.render(t);
+        if (null === t)
+          return void console.warn("need to be HTML string or object");
+        var o = (e = this.find(e)).appendChild(t),
+          s = e;
+        return this.createMap(s), o;
       }
     },
     {
       key: "settings",
-      value: function settings(attrs) {
-        if (typeof attrs[0] !== "undefined") {
-          return;
+      value: function settings(e) {
+        if (void 0 === e[0]) {
+          var t = [],
+            o = 0,
+            s = [];
+
+          for (var r in e) {
+            s.push(e[r]);
+          }
+
+          s.forEach(function (e) {
+            t[o++] = e;
+          });
+          var i = [];
+          o = 0;
+          Object.keys(e).forEach(function (e) {
+            i[o++] = e;
+          });
+          var n = "";
+          o = 0;
+          return (
+            i.forEach(function (e, o) {
+              n += " ".concat(e, '="').concat(t[o], '"');
+            }),
+            n
+          );
         }
-
-        var setAttrsValues = [];
-        var i = 0;
-        var Values = [];
-
-        for (var value in attrs) {
-          Values.push(attrs[value]);
-        }
-
-        Values.forEach(function (value) {
-          setAttrsValues[i++] = value;
-        });
-        var setAttrsNames = [];
-        var i = 0;
-        Object.keys(attrs).forEach(function (name) {
-          setAttrsNames[i++] = name;
-        });
-        var pushAttrs = "";
-        var i = 0;
-        setAttrsNames.forEach(function (item, key) {
-          pushAttrs += " ".concat(item, '="').concat(setAttrsValues[key], '"');
-        });
-        return pushAttrs;
       }
     },
     {
       key: "createTag",
-      value: function createTag(el) {
-        var attrs =
+      value: function createTag(e) {
+        var t =
           arguments.length > 1 && arguments[1] !== undefined
             ? arguments[1]
             : "";
-        var content =
+        var o =
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : "";
-
-        if (_typeof(attrs) === "object") {
-          attrs = this.settings(attrs);
-        }
-
-        var tag = "<".concat(el).concat(attrs, ">");
-        tag += content;
-
-        if (el !== "br") {
-          tag += "</".concat(el, ">");
-        }
-
-        return tag;
+        "object" == _typeof(t) && (t = this.settings(t));
+        var s = "<".concat(e).concat(t, ">");
+        return (s += o), "br" !== e && (s += "</".concat(e, ">")), s;
       }
     },
     {
       key: "html",
-      value: function html(el, attrs, content) {
-        var replacement = this.replacement;
-        var app = this;
-
-        if (el === "code") {
-          content = replacement(content, "<", "&lt;");
-          content = replacement(content, ">", "&gt;");
-          content = replacement(content, " ", "&nbsp;");
-        }
-
-        if (typeof content === "undefined") {
-          // si no existen atributos
-          // y existe contenido el esquema puede ser así
-          // el($tag, $contenido)
-          // por lo que el contenido ahora es igual al campo atributos.
-          var content = attrs;
-          var attrs = "";
-        }
-
+      value: function html(e, t, o) {
+        var s = this.replacement,
+          r = this;
         if (
-          _typeof(content) === "object" &&
-          typeof content[0] !== "undefined"
-        ) {
-          var elements = "";
-          var i = 0;
-          content.forEach(function (item, key) {
-            elements += "".concat(item);
-          });
-          var html = app.createTag(el, attrs, elements);
-        } else if (_typeof(content) === "object") {
-          // si llega a este punto y sigue siendo
-          // un objeto quiere decir que el segundo
-          // argumento es un objeto con class id etc.
-          // se puede estar intentando crear un elemento vacío.
-          // por lo tanto content será igual a nada
-          var attrs = content;
-          var html = app.createTag(el, attrs, (content = ""));
-        } else {
-          var html = app.createTag(el, attrs, content);
-        }
+          ("code" === e &&
+            ((o = s(o, "<", "&lt;")),
+            (o = s(o, ">", "&gt;")),
+            (o = s(o, " ", "&nbsp;"))),
+          void 0 === o)
+        )
+          (o = t), (t = "");
 
-        return html;
+        if ("object" == _typeof(o) && void 0 !== o[0]) {
+          var i = "";
+          o.forEach(function (e, t) {
+            i += "".concat(e);
+          });
+          var n = r.createTag(e, t, i);
+        } else if ("object" == _typeof(o))
+          (t = o), (n = r.createTag(e, t, (o = "")));
+        else n = r.createTag(e, t, o);
+
+        return n;
       }
     },
     {
       key: "el",
-      value: function el(_el, attrs, content) {
-        return this.html(_el, attrs, content);
+      value: function el(e, t, o) {
+        return this.html(e, t, o);
       }
     }
   ]);

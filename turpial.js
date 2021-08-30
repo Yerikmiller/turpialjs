@@ -424,9 +424,10 @@ class Turpial
 				// old output: `${href}${d}${obj.path}`
 				
 			},
-			set: ()=>{
+			set: (props)=>{
 				const app = this;
 				app.app = {};
+				props = props||{};
 				var Path = window.location.href.split("?");
 				Path = Path[0];
 				Path = Path.split("#");
@@ -453,19 +454,31 @@ class Turpial
 					}
 					n++;
 				})				
-				if(typeof app.app.controller_name === "undefined")
-				{app.app.controller_name = "index";}
+				app.app.controller_name = app.app.controller_name||"index";
+				app.app.action_name = app.app.action_name||"";
+
+				let path = `${app.app.controller_name}/${app.app.action_name}/${app.app.parameters.join("/")}`;
+				path = path.split("//").join("/");
+				path = path.split("///").join("/");
+
+				app.app.props = props;
+
+				app.app.path = path;
 				app.host = app.controller.routes.getHost();
+
+				app.app.host = app.host;
 			},
 			change: ( obj )=>{
 				const app = this;
+				const type = obj.type||"pushState";
+				
 				obj.loadModule = app.un(obj.loadModule, true);
 
 				let output = `${app.controller.routes.getHost( obj )}${obj.path}`;
 
 				if(output === window.location.href){ return; }
 				
-				window.history.pushState( app.un( obj.object ),
+				window.history[type]( app.un( obj.object ),
 										  "",
 										  app.un( output ) );	
 				if(obj.loadModule === true && app.loadModulesOnRoute === true){
