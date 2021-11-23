@@ -164,6 +164,7 @@ class Turpial
 			const cancelOnResend =	app.un(obj.cancelOnResend, null );
 			const headers = app.un(obj.options, null );
 			const method = app.un(obj.method, "GET" );
+			const attributes = app.un(obj.attributes, [] );
 
 			obj.url = obj.url || [];
 			obj.file = obj.file || obj.url;
@@ -213,6 +214,12 @@ class Turpial
 				 		elementTag = "script"; 
 				 	}				 	
 					var el = document.createElement(elementTag);
+
+					attributes.map(( attribute )=>{
+						// Example: <script [name]=[content] src="..."></script>
+						el.setAttribute(attribute.name, attribute.content);
+					})
+
 					if(type === "style"){
 						el.type = "text/css";
 					}else if(type === "link"){
